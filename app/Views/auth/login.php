@@ -37,13 +37,7 @@ $msg = (string) (new \App\Request())->query('msg', '');
     <div class="auth-foot">
       还没账号？<a href="<?= path('/register') ?>">注册一个</a>
       <span class="dim"> · </span>
-      <?php if (cfg('site.support')): ?>
-        忘了密码，找客服 QQ <?= e(cfg('site.support')) ?>
-      <?php elseif (cfg('site.email')): ?>
-        忘了密码，发邮件到 <?= e(cfg('site.email')) ?>
-      <?php else: ?>
-        忘了密码请联系站点管理员
-      <?php endif; ?>
+      <a href="<?= path('/forgot') ?>">忘记密码？</a>
     </div>
   </div>
 </div>

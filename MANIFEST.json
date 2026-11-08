@@ -2,12 +2,12 @@
     "product": "fulklink",
     "edition": "open",
     "title": "开源版",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "php_min": "8.0",
-    "built_at": "2026-11-08T22:47:19+08:00",
-    "total_files": 70,
-    "total_bytes": 424058,
-    "root_sha256": "a1c159e28721d9d249c9eb2fd0fe4c82a607c0f9928451d7cb44ce229a585277",
+    "built_at": "2026-11-08T23:59:44+08:00",
+    "total_files": 71,
+    "total_bytes": 431522,
+    "root_sha256": "6d0e1b064cf6bdb82a41c022b719a7e1658acd0c5affa1b9e7dad55f4085ddf5",
     "files": [
         {
             "path": ".env.example",
@@ -17,7 +17,7 @@
         {
             "path": "VERSION",
             "bytes": 6,
-            "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+            "sha256": "44e161e4495cac2cf7858043e9e6418e9579f0ddcfae826f9a372622968ce066"
         },
         {
             "path": "app/Auth.php",
@@ -86,8 +86,8 @@
         },
         {
             "path": "app/Controllers/AuthController.php",
-            "bytes": 9024,
-            "sha256": "b7c5f9d54b9a194c17df5450fa4ae7328d364f49f0bbe10ba784c3314fc7de5c"
+            "bytes": 12689,
+            "sha256": "cd6386c81d725c37f2cefff2cb6e18b27ffe370e93b049031dafe9e3626fac12"
         },
         {
             "path": "app/Controllers/DomainController.php",
@@ -215,9 +215,14 @@
             "sha256": "f802519cabedb499596963a018495c5d92af3e07b934c3163c66fd585c4a18e3"
         },
         {
+            "path": "app/Views/auth/forgot.php",
+            "bytes": 3917,
+            "sha256": "f45a7c099728dd574b6b85a8be0cf8e77a3a0352b9bc0ba9b4f99bfbb169e8d7"
+        },
+        {
             "path": "app/Views/auth/login.php",
-            "bytes": 1834,
-            "sha256": "0937c927bfd9cb0359285e92b0d1f93ba16e6a8aec482d0467b6362a864169b8"
+            "bytes": 1591,
+            "sha256": "f2b8422267b2e49d0190bed5a7599af79877fdd7e157b7608b4781302ebce583"
         },
         {
             "path": "app/Views/auth/register.php",
@@ -306,8 +311,8 @@
         },
         {
             "path": "app/routes.php",
-            "bytes": 3882,
-            "sha256": "e99c4e4f097892827953d733d9052ec3ee1d5d46a8c5a76a444ade1222c4023e"
+            "bytes": 4007,
+            "sha256": "964686ee7603ce4a31212fbf4612ea94e26af40cea2a1d3c8d46603f47bdc8bb"
         },
         {
             "path": "config/config.php",

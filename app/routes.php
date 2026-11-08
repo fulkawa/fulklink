@@ -31,6 +31,8 @@ $router->get('/register', [AuthController::class, 'registerForm']);
 $router->post('/register', [AuthController::class, 'register']);
 $router->get('/login', [AuthController::class, 'loginForm']);
 $router->post('/login', [AuthController::class, 'login']);
+$router->get('/forgot', [AuthController::class, 'forgotForm']);
+$router->post('/forgot', [AuthController::class, 'forgot']);
 $router->post('/logout', [AuthController::class, 'logout']);
 $router->post('/captcha/send', [AuthController::class, 'sendCode']);
 
