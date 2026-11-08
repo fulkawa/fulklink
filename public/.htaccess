@@ -1,0 +1,25 @@
+# FulkLink · Apache 重写规则
+# 站点根目录必须指向 public/，不要指到项目根目录。
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # 真实存在的文件和目录直接放过
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # 其余全部交给入口
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set Referrer-Policy "same-origin"
+</IfModule>
+
+# 别把配置和日志露出去（正常情况下它们在 public 之外，这里再兜一层）
+<FilesMatch "^\.(env|git)">
+    Require all denied
+</FilesMatch>

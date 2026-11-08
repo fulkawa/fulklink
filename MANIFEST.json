@@ -1,0 +1,363 @@
+{
+    "product": "fulklink",
+    "edition": "open",
+    "title": "开源版",
+    "version": "1.0.0",
+    "php_min": "8.0",
+    "built_at": "2026-11-08T22:30:52+08:00",
+    "total_files": 70,
+    "total_bytes": 423784,
+    "root_sha256": "ab7a35e2b229e781eed8f2c5caa2a7abddb125b57ed441a517c554a80d9af55c",
+    "files": [
+        {
+            "path": ".env.example",
+            "bytes": 1126,
+            "sha256": "c96385293ab14848afdb225c108822f8b549838aca87ba607fbd88d0b787ce12"
+        },
+        {
+            "path": "VERSION",
+            "bytes": 6,
+            "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+        },
+        {
+            "path": "app/Auth.php",
+            "bytes": 13100,
+            "sha256": "87e4f0b173d556190340ca4e9b0025cc3c9764d29a669f0099c62bbb161c6f9f"
+        },
+        {
+            "path": "app/Captcha.php",
+            "bytes": 6833,
+            "sha256": "f52397a10a57c4996fc61668413a0ad71091cee888f001519dc58ea755ba32bb"
+        },
+        {
+            "path": "app/Cloud/BlockCache.php",
+            "bytes": 651,
+            "sha256": "1637aef60b0d42baa473eb361e6d8ab84b31825ec58a11adabbc417d4c1373a2"
+        },
+        {
+            "path": "app/Cloud/Entitlement.php",
+            "bytes": 2262,
+            "sha256": "f535800fcfa4ffa3833b7e2bb7eab034bb4a42e1355deb55d50efe2acc8a07fa"
+        },
+        {
+            "path": "app/Cloud/Features.php",
+            "bytes": 3847,
+            "sha256": "84b97c69ac8d120170b262ac46335f34257a1659083385202e08a9077f7bef0b"
+        },
+        {
+            "path": "app/Cloud/Gate.php",
+            "bytes": 2412,
+            "sha256": "d6b2ad08f8f7eb248ca4c551691c70ddfeaf26db46847bb0200c6eb314b9dd46"
+        },
+        {
+            "path": "app/Cloud/Geo.php",
+            "bytes": 1576,
+            "sha256": "6f639adb78cc14c13c4a8cce9d610b51de350fe929492c59e8d5ac0d1aeece28"
+        },
+        {
+            "path": "app/Cloud/GeoCache.php",
+            "bytes": 924,
+            "sha256": "b41644bc1545ab8a95651d93fcbe0d55ab1512a9e0924360d73f6981c14fc0c2"
+        },
+        {
+            "path": "app/Cloud/Heartbeat.php",
+            "bytes": 605,
+            "sha256": "c1dba02ea308236e82a7ff9d65383d1f9535fb68513e471aed8468fbb1eef181"
+        },
+        {
+            "path": "app/Cloud/Mode.php",
+            "bytes": 1721,
+            "sha256": "603951fff82076aa2cdffbf2186026c99894a5a574648dbdbbaa0b08fb519fcd"
+        },
+        {
+            "path": "app/Config.php",
+            "bytes": 2487,
+            "sha256": "42d3e0c1ac0d2b44d5a6c9d4157fb3361a9a79252d14b47fb10b124118ed9a41"
+        },
+        {
+            "path": "app/Controllers/AccountController.php",
+            "bytes": 2418,
+            "sha256": "b2ec2ddeb318b7d7259468f4bb871df600a01654931722e00dc8c7982d4d3f83"
+        },
+        {
+            "path": "app/Controllers/AdminController.php",
+            "bytes": 6290,
+            "sha256": "32e06bdfb575996494ada5aa1eadc70cf2cadb68367ee5331a43a1e6788d5042"
+        },
+        {
+            "path": "app/Controllers/AuthController.php",
+            "bytes": 9024,
+            "sha256": "b7c5f9d54b9a194c17df5450fa4ae7328d364f49f0bbe10ba784c3314fc7de5c"
+        },
+        {
+            "path": "app/Controllers/DomainController.php",
+            "bytes": 4464,
+            "sha256": "f0f12ace6233012749acb0417f593c653d19a6d23188976136bea3fd81c07fbd"
+        },
+        {
+            "path": "app/Controllers/GoController.php",
+            "bytes": 7287,
+            "sha256": "1e7f048da004592ac48ee97f57318ed34f8da87698ef4e40fa95f92b882bdf23"
+        },
+        {
+            "path": "app/Controllers/LinkController.php",
+            "bytes": 15771,
+            "sha256": "58477c955622d279189d460ea0f38f812513ab158341866213b243e6c3628da2"
+        },
+        {
+            "path": "app/Controllers/PublicController.php",
+            "bytes": 2962,
+            "sha256": "0494fb956493c9f329ddc706e519de955857dac8fc1dc8dcbae1f7969d7bc8af"
+        },
+        {
+            "path": "app/Crypto.php",
+            "bytes": 2608,
+            "sha256": "a357bec8b0946fc4f25c90ce57759f0ee28bd010f87fe3d8ab7c01716d2894d3"
+        },
+        {
+            "path": "app/Db.php",
+            "bytes": 3969,
+            "sha256": "cf0abbec0ef5ae5a8623b0ec82d170c2ee5a28b3a40e20ffc2c21a83d4026762"
+        },
+        {
+            "path": "app/Domains.php",
+            "bytes": 9887,
+            "sha256": "224e90ba0ee647b087d81dec0c86763ce35c8d0edde2206194ac73d283f63bd5"
+        },
+        {
+            "path": "app/Http.php",
+            "bytes": 2212,
+            "sha256": "288e527a18127681fac351f17311c762b59ac204a0566d4ae282ebbe1bcc8b7f"
+        },
+        {
+            "path": "app/LinkStats.php",
+            "bytes": 13577,
+            "sha256": "d7fe1df037d83e733d5a64a7527618e722bd6142b97bacebc9431b8f50d399a9"
+        },
+        {
+            "path": "app/Mailer.php",
+            "bytes": 11387,
+            "sha256": "98552ef6a879a1a90fe3051c186af6759ff012a346e0129214e2de2f92ef682f"
+        },
+        {
+            "path": "app/Migrator.php",
+            "bytes": 21020,
+            "sha256": "55ebcebbd73052f41a642772c12094e7e2b6394a6b0ddb00f0d088560967aead"
+        },
+        {
+            "path": "app/Plans.php",
+            "bytes": 7643,
+            "sha256": "a80249962bf5a260b369306371e53902ab689e8b5d636a868c1cf4a57c8156d7"
+        },
+        {
+            "path": "app/Request.php",
+            "bytes": 4607,
+            "sha256": "be21fc4e06945bee5abd713b414ac7725ba116dfeb095631ce56cedfab3df3a4"
+        },
+        {
+            "path": "app/Response.php",
+            "bytes": 1454,
+            "sha256": "6770e1aeffdbb2eecacf6f1f8e17ad6c1dc02c8081bb3647a6db8757fd91f693"
+        },
+        {
+            "path": "app/Router.php",
+            "bytes": 2867,
+            "sha256": "347dd2a671f5acfe2dd8cb8342cfeaa8272972ad159e0f07e84616549ae71f40"
+        },
+        {
+            "path": "app/Settings.php",
+            "bytes": 6001,
+            "sha256": "c663de5a08ac05332d3a48f6f79f6166d446269d1e5da5d115bce424032dede3"
+        },
+        {
+            "path": "app/Shorten.php",
+            "bytes": 27319,
+            "sha256": "a8c44f6463d8265202747afc199bf2d5e6c7f404841e913a57c1673876d6ab05"
+        },
+        {
+            "path": "app/Sms.php",
+            "bytes": 7441,
+            "sha256": "1a14e311fdc95868b4817c7d5fc27b1db0c60cc8a004ca464fe36d66dbf5bce5"
+        },
+        {
+            "path": "app/Ua.php",
+            "bytes": 6109,
+            "sha256": "2d26530d3547770c3c4dde1186c78d75b9b19a7db72a7d43d5cb85b605c3e6bf"
+        },
+        {
+            "path": "app/View.php",
+            "bytes": 976,
+            "sha256": "e8bc7276eb3907e561bed237ba0b64cec97b2a1f7e50c2ad00f7d69a5f417a97"
+        },
+        {
+            "path": "app/Views/account/_nav.php",
+            "bytes": 491,
+            "sha256": "07f532f3095e0c802ed0a128a61069d4cbbc03e7c6773753fa213d2500291530"
+        },
+        {
+            "path": "app/Views/account/home.php",
+            "bytes": 2449,
+            "sha256": "13a24bb390ce988d527dd973bd8b4fa1d3f1fd42ded20eb7f9962a9d0ed656c4"
+        },
+        {
+            "path": "app/Views/admin/_nav.php",
+            "bytes": 544,
+            "sha256": "6109c4095f04301df26d883982596c81cb444c4c2916bfac5820ac6aa3d883c3"
+        },
+        {
+            "path": "app/Views/admin/home.php",
+            "bytes": 2999,
+            "sha256": "7ba437a6e0cfaccd140d6b23314c6ea633df3dd8f2790f8fede834504c94f213"
+        },
+        {
+            "path": "app/Views/admin/settings.php",
+            "bytes": 6556,
+            "sha256": "f802519cabedb499596963a018495c5d92af3e07b934c3163c66fd585c4a18e3"
+        },
+        {
+            "path": "app/Views/auth/login.php",
+            "bytes": 1596,
+            "sha256": "894c932d63cc781e401a27b10722e8937d86c53fda778b41114d1e6c16a34703"
+        },
+        {
+            "path": "app/Views/auth/register.php",
+            "bytes": 5800,
+            "sha256": "1e0c16f7be70d3a9f9e3dfd6be5488573f8cd6eaaea113c6e93a3a170b6a4d6d"
+        },
+        {
+            "path": "app/Views/docs.php",
+            "bytes": 4141,
+            "sha256": "8ec51e2a4e55fb5fa13030eef86047a997a35e06a67aca96428d60e3eaf83c0b"
+        },
+        {
+            "path": "app/Views/domains/index.php",
+            "bytes": 8027,
+            "sha256": "9d28b4152fdfe8495a8217094e5fa8240b5d52be38852ee9c74d2990348ac505"
+        },
+        {
+            "path": "app/Views/error.php",
+            "bytes": 408,
+            "sha256": "be72a45fb8851b593a6c30f0ca9f8b6a8b510fd8347b34f9b6ed9db263c9c0c6"
+        },
+        {
+            "path": "app/Views/go/notice.php",
+            "bytes": 800,
+            "sha256": "0268d3347b3472b307194458ef7d835127fe493add0c9fa74b2938235f9f6be2"
+        },
+        {
+            "path": "app/Views/go/password.php",
+            "bytes": 1276,
+            "sha256": "36a4405bd547903252cf77efebac47bb5a12ed27c87186146d673af120e79c82"
+        },
+        {
+            "path": "app/Views/home.php",
+            "bytes": 5103,
+            "sha256": "af9baa5edffbd39066a43f1f55ad9a4ec535b9f0d0c6d25366e7d9ca7d3c3ea4"
+        },
+        {
+            "path": "app/Views/layout.php",
+            "bytes": 4393,
+            "sha256": "465256eadfe541307a82a8acbae9ff0eef059648a6257dee6b054cf0a5d0e3e2"
+        },
+        {
+            "path": "app/Views/legal.php",
+            "bytes": 5701,
+            "sha256": "f4f8e0c73f76d4782b1ba6063c7daa9c2c196bac795bf51ec7b5a5dadf52a496"
+        },
+        {
+            "path": "app/Views/links/audit.php",
+            "bytes": 3623,
+            "sha256": "a6803e0c892d00c17f0d047c2961738f94702cf4531628b77306548979403cbc"
+        },
+        {
+            "path": "app/Views/links/form.php",
+            "bytes": 8983,
+            "sha256": "1cec3a3780351a64311feefef10faf75bbd32e6265ac127e223a5ac832692039"
+        },
+        {
+            "path": "app/Views/links/index.php",
+            "bytes": 12829,
+            "sha256": "00227ec7935bd713cdb56b0248d5269b516c1ff16a658961268a040f1cda496b"
+        },
+        {
+            "path": "app/Views/links/qr.php",
+            "bytes": 3636,
+            "sha256": "926b08481f76d906a055f0066dc9b6d7822804a3968ba5515a12bfd750044c01"
+        },
+        {
+            "path": "app/Views/links/stats.php",
+            "bytes": 9561,
+            "sha256": "bd82cd14c4cf816a6ba2012d443570093830d30cc99051e6444623631c1a480a"
+        },
+        {
+            "path": "app/Workspace.php",
+            "bytes": 8524,
+            "sha256": "8e0cf070e3a295216f7b0aa6c659401e907303cf5a78b34dd93d38e44b15ea46"
+        },
+        {
+            "path": "app/bootstrap.php",
+            "bytes": 2771,
+            "sha256": "bebb0f17d51f83ef0643d8087e8e5426b40bb951441233ad4bfc1e76f08f47b5"
+        },
+        {
+            "path": "app/helpers.php",
+            "bytes": 3123,
+            "sha256": "5a17da7e551dc6e09e2d6980ea6a233f10396b09e057f8f0725c2f247fd81184"
+        },
+        {
+            "path": "app/routes.php",
+            "bytes": 3882,
+            "sha256": "e99c4e4f097892827953d733d9052ec3ee1d5d46a8c5a76a444ade1222c4023e"
+        },
+        {
+            "path": "config/config.php",
+            "bytes": 4088,
+            "sha256": "29b7620102c575398dea16faa848540c7bce86ea25f06240cc3dca97760c1bc3"
+        },
+        {
+            "path": "data/.gitkeep",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+            "path": "database/schema.sql",
+            "bytes": 20663,
+            "sha256": "40821d6760e6dbc95f0b23423caee9e6c1f1f6b81ced8de7dd3221622392ff67"
+        },
+        {
+            "path": "install/index.php",
+            "bytes": 30016,
+            "sha256": "61235b909a07ff2223cce947aff9afb5a3036d4dd9e29424d7c12b610d1bb9e5"
+        },
+        {
+            "path": "public/.htaccess",
+            "bytes": 702,
+            "sha256": "8360d1f5503c8f7611c95ea9fb591946553fd3f4d8521edae7f3e0b36a2c399f"
+        },
+        {
+            "path": "public/assets/css/app.css",
+            "bytes": 24350,
+            "sha256": "5ad0214b6bccdb246dcc34ed4e5a2ae89a7ac860f0cfb36f8348ea27ca387000"
+        },
+        {
+            "path": "public/assets/js/qrcode.min.js",
+            "bytes": 19927,
+            "sha256": "c541ef06327885a8415bca8df6071e14189b4855336def4f36db54bde8484f36"
+        },
+        {
+            "path": "public/index.php",
+            "bytes": 712,
+            "sha256": "8c4ed06831d950137c5b231ceb05917ea2561718487b6f8786a8cde620cac4f8"
+        },
+        {
+            "path": "public/install.php",
+            "bytes": 907,
+            "sha256": "ffdd0a8a5078c64fcebde83ed97e2745f798edda688563dcb6f9f42dfd853fdc"
+        },
+        {
+            "path": "public/router.php",
+            "bytes": 360,
+            "sha256": "fbd56d778d20f7787a339f00469f58f056d47a39ea22d37efeae39a684e8243c"
+        }
+    ]
+}
