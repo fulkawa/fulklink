@@ -12,6 +12,8 @@ English: FulkLink is a self-hosted URL shortener written in plain PHP 8 + MySQL 
 | 短链列表 | 点击统计 |
 |---|---|
 | ![短链列表](docs/shots/02-links.png) | ![点击统计](docs/shots/04-stats.png) |
+| **管理后台 · 用户** | **管理后台 · 短链** |
+| ![后台用户管理](docs/shots/06-admin-users.png) | ![后台短链管理](docs/shots/07-admin-links.png) |
 
 ---
 
@@ -47,9 +49,9 @@ English: FulkLink is a self-hosted URL shortener written in plain PHP 8 + MySQL 
 
 **账号与后台**
 
-- 注册 / 登录 / 邮件验证码 / 改密
+- 注册 / 登录 / 邮件验证码 / 改密 / 忘记密码自助重置
 - 多用户，数据互相隔离
-- 后台：站点设置、SMTP 测试、全站链接查看
+- 管理后台：用户管理（搜索、停用 / 启用、设管理员、重置密码）、全站短链管理（搜索、停用 / 启用 / 删除）、站点设置、SMTP 测试、操作日志
 
 **部署**
 

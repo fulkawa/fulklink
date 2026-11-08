@@ -154,6 +154,216 @@ final class AdminController
         return $this->back('/admin/settings', '测试信已发到 ' . $to . '，没收到先看垃圾箱。');
     }
 
+    // ---------------- 用户管理 ----------------
+
+    private const PAGE_SIZE = 20;
+
+    public function users(array $params = []): Response
+    {
+        if (($r = $this->guard()) !== null) {
+            return $r;
+        }
+        $req = new Request();
+        $q = trim((string) $req->query('q', ''));
+        $page = max(1, (int) $req->query('page', '1'));
+
+        $where = '';
+        $args = [];
+        if ($q !== '') {
+            $where = 'WHERE `u`.`email` LIKE ? OR `u`.`phone` LIKE ? OR `u`.`name` LIKE ?';
+            $like = '%' . $q . '%';
+            $args = [$like, $like, $like];
+        }
+
+        $total = (int) Db::val("SELECT COUNT(*) FROM `users` `u` $where", $args, 0);
+        $pages = max(1, (int) ceil($total / self::PAGE_SIZE));
+        $page = min($page, $pages);
+        $offset = ($page - 1) * self::PAGE_SIZE;
+
+        $rows = Db::all(
+            "SELECT `u`.*, COALESCE(`l`.`cnt`, 0) AS `link_count`
+             FROM `users` `u`
+             LEFT JOIN (SELECT `user_id`, COUNT(*) AS `cnt` FROM `links` GROUP BY `user_id`) `l`
+               ON `l`.`user_id` = `u`.`id`
+             $where
+             ORDER BY `u`.`id` ASC
+             LIMIT " . self::PAGE_SIZE . " OFFSET $offset",
+            $args
+        );
+
+        return Response::html(View::render('admin/users', [
+            'title'  => '用户',
+            'nav'    => '',
+            'active' => 'users',
+            'rows'   => $rows,
+            'q'      => $q,
+            'page'   => $page,
+            'pages'  => $pages,
+            'total'  => $total,
+            'meId'   => Auth::id(),
+            'notice' => (string) $req->query('msg', ''),
+            'error'  => (string) $req->query('err', ''),
+        ]));
+    }
+
+    /** 用户操作：停用 / 启用 / 设管理员 / 取消管理员 / 重置密码。自己不能动自己 */
+    public function userAction(array $params = []): Response
+    {
+        if (($r = $this->guard()) !== null) {
+            return $r;
+        }
+        $req = new Request();
+        $back = '/admin/users';
+        if (!Auth::checkCsrf($req->str('_csrf') ?: null)) {
+            return $this->back($back, '页面过期了，重试一次。', true);
+        }
+
+        $id = (int) $req->input('id', 0);
+        $act = (string) $req->input('act', '');
+        if ($id === Auth::id()) {
+            return $this->back($back, '不能对自己做这个操作。', true);
+        }
+        $target = Db::one('SELECT * FROM `users` WHERE `id` = ?', [$id]);
+        if ($target === null) {
+            return $this->back($back, '用户不存在。', true);
+        }
+
+        switch ($act) {
+            case 'disable':
+                Db::exec("UPDATE `users` SET `status` = 'disabled', `updated_at` = ? WHERE `id` = ?", [now(), $id]);
+                Db::exec('DELETE FROM `sessions` WHERE `user_id` = ?', [$id]);
+                Db::log('admin.user', '停用用户 #' . $id . ' ' . Auth::identOf($target), ['by' => Auth::id()]);
+                $msg = '已停用 ' . Auth::identOf($target) . '，对方所有登录已下线。';
+                break;
+            case 'enable':
+                Db::exec("UPDATE `users` SET `status` = 'active', `updated_at` = ? WHERE `id` = ?", [now(), $id]);
+                Db::log('admin.user', '启用用户 #' . $id . ' ' . Auth::identOf($target), ['by' => Auth::id()]);
+                $msg = '已启用 ' . Auth::identOf($target) . '。';
+                break;
+            case 'promote':
+                Db::exec("UPDATE `users` SET `role` = 'admin', `updated_at` = ? WHERE `id` = ?", [now(), $id]);
+                Db::log('admin.user', '把 #' . $id . ' ' . Auth::identOf($target) . ' 设为管理员', ['by' => Auth::id()]);
+                $msg = Auth::identOf($target) . ' 现在是管理员了。';
+                break;
+            case 'demote':
+                Db::exec("UPDATE `users` SET `role` = 'user', `updated_at` = ? WHERE `id` = ?", [now(), $id]);
+                Db::exec('DELETE FROM `sessions` WHERE `user_id` = ?', [$id]);
+                Db::log('admin.user', '把 #' . $id . ' ' . Auth::identOf($target) . ' 降为普通用户', ['by' => Auth::id()]);
+                $msg = Auth::identOf($target) . ' 已降为普通用户。';
+                break;
+            case 'resetpass':
+                $pass = (string) $req->input('password', '');
+                if (($problem = Auth::passwordProblem($pass)) !== '') {
+                    return $this->back($back, '新密码不行：' . $problem, true);
+                }
+                Auth::changePassword($id, $pass);
+                Db::log('admin.user', '重置了 #' . $id . ' ' . Auth::identOf($target) . ' 的密码', ['by' => Auth::id()]);
+                $msg = '已重置 ' . Auth::identOf($target) . ' 的密码，对方所有登录已下线。';
+                break;
+            default:
+                return $this->back($back, '未知操作。', true);
+        }
+
+        return $this->back($back, $msg);
+    }
+
+    // ---------------- 链接管理 ----------------
+
+    public function links(array $params = []): Response
+    {
+        if (($r = $this->guard()) !== null) {
+            return $r;
+        }
+        $req = new Request();
+        $q = trim((string) $req->query('q', ''));
+        $status = (string) $req->query('status', '');
+        $page = max(1, (int) $req->query('page', '1'));
+
+        $where = [];
+        $args = [];
+        if ($q !== '') {
+            $where[] = '(`l`.`slug` LIKE ? OR `l`.`target_url` LIKE ? OR `l`.`title` LIKE ?)';
+            $like = '%' . $q . '%';
+            array_push($args, $like, $like, $like);
+        }
+        if ($status === 'active' || $status === 'disabled') {
+            $where[] = '`l`.`status` = ?';
+            $args[] = $status;
+        }
+        $whereSql = $where === [] ? '' : 'WHERE ' . implode(' AND ', $where);
+
+        $total = (int) Db::val("SELECT COUNT(*) FROM `links` `l` $whereSql", $args, 0);
+        $pages = max(1, (int) ceil($total / self::PAGE_SIZE));
+        $page = min($page, $pages);
+        $offset = ($page - 1) * self::PAGE_SIZE;
+
+        $rows = Db::all(
+            "SELECT `l`.*, COALESCE(NULLIF(`u`.`email`, ''), NULLIF(`u`.`phone`, ''), CONCAT('用户#', `u`.`id`)) AS `owner`
+             FROM `links` `l` LEFT JOIN `users` `u` ON `u`.`id` = `l`.`user_id`
+             $whereSql
+             ORDER BY `l`.`id` DESC
+             LIMIT " . self::PAGE_SIZE . " OFFSET $offset",
+            $args
+        );
+
+        return Response::html(View::render('admin/links', [
+            'title'  => '短链',
+            'nav'    => '',
+            'active' => 'links',
+            'rows'   => $rows,
+            'q'      => $q,
+            'status' => $status,
+            'page'   => $page,
+            'pages'  => $pages,
+            'total'  => $total,
+            'notice' => (string) $req->query('msg', ''),
+            'error'  => (string) $req->query('err', ''),
+        ]));
+    }
+
+    /** 链接操作：停用 / 启用 / 删除 */
+    public function linkAction(array $params = []): Response
+    {
+        if (($r = $this->guard()) !== null) {
+            return $r;
+        }
+        $req = new Request();
+        $back = '/admin/links';
+        if (!Auth::checkCsrf($req->str('_csrf') ?: null)) {
+            return $this->back($back, '页面过期了，重试一次。', true);
+        }
+
+        $id = (int) $req->input('id', 0);
+        $act = (string) $req->input('act', '');
+        $link = Db::one('SELECT * FROM `links` WHERE `id` = ?', [$id]);
+        if ($link === null) {
+            return $this->back($back, '短链不存在。', true);
+        }
+
+        switch ($act) {
+            case 'disable':
+                Db::exec("UPDATE `links` SET `status` = 'disabled', `updated_at` = ? WHERE `id` = ?", [now(), $id]);
+                Db::log('admin.link', '停用短链 #' . $id . ' /' . $link['slug'], ['by' => Auth::id()]);
+                $msg = '已停用 /' . $link['slug'] . '，访问会显示已下线。';
+                break;
+            case 'enable':
+                Db::exec("UPDATE `links` SET `status` = 'active', `updated_at` = ? WHERE `id` = ?", [now(), $id]);
+                Db::log('admin.link', '启用短链 #' . $id . ' /' . $link['slug'], ['by' => Auth::id()]);
+                $msg = '已启用 /' . $link['slug'] . '。';
+                break;
+            case 'delete':
+                Db::exec('DELETE FROM `clicks` WHERE `link_id` = ?', [$id]);
+                Db::exec('DELETE FROM `links` WHERE `id` = ?', [$id]);
+                Db::log('admin.link', '删除短链 #' . $id . ' /' . $link['slug'], ['by' => Auth::id()]);
+                $msg = '已删除 /' . $link['slug'] . ' 及其点击记录，不可恢复。';
+                break;
+            default:
+                return $this->back($back, '未知操作。', true);
+        }
+
+        return $this->back($back, $msg);
+    }
+
     private function guard(): ?Response
     {
         $user = Auth::user();

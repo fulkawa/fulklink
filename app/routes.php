@@ -42,6 +42,10 @@ $router->post('/account/password', [AccountController::class, 'changePassword'])
 
 /* 后台。只有 role=admin 能进，判定在控制器里 */
 $router->get('/admin', [AdminController::class, 'home']);
+$router->get('/admin/users', [AdminController::class, 'users']);
+$router->post('/admin/users/action', [AdminController::class, 'userAction']);
+$router->get('/admin/links', [AdminController::class, 'links']);
+$router->post('/admin/links/action', [AdminController::class, 'linkAction']);
 $router->get('/admin/settings', [AdminController::class, 'settings']);
 $router->post('/admin/settings', [AdminController::class, 'saveSettings']);
 $router->post('/admin/mail-test', [AdminController::class, 'mailTest']);
