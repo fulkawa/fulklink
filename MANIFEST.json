@@ -4,10 +4,10 @@
     "title": "开源版",
     "version": "1.0.0",
     "php_min": "8.0",
-    "built_at": "2026-11-08T22:30:52+08:00",
+    "built_at": "2026-11-08T22:47:19+08:00",
     "total_files": 70,
-    "total_bytes": 423784,
-    "root_sha256": "ab7a35e2b229e781eed8f2c5caa2a7abddb125b57ed441a517c554a80d9af55c",
+    "total_bytes": 424058,
+    "root_sha256": "a1c159e28721d9d249c9eb2fd0fe4c82a607c0f9928451d7cb44ce229a585277",
     "files": [
         {
             "path": ".env.example",
@@ -41,8 +41,8 @@
         },
         {
             "path": "app/Cloud/Features.php",
-            "bytes": 3847,
-            "sha256": "84b97c69ac8d120170b262ac46335f34257a1659083385202e08a9077f7bef0b"
+            "bytes": 2752,
+            "sha256": "7dbdd3bf581f471ad1cee1f832de1523709bdfb17e34775726d7585cd4589dc2"
         },
         {
             "path": "app/Cloud/Gate.php",
@@ -192,7 +192,7 @@
         {
             "path": "app/Views/account/_nav.php",
             "bytes": 491,
-            "sha256": "07f532f3095e0c802ed0a128a61069d4cbbc03e7c6773753fa213d2500291530"
+            "sha256": "976d11437d1f3adc02cb70ee24153368d0559fc4277b3f76a9a6538e27e8b9a6"
         },
         {
             "path": "app/Views/account/home.php",
@@ -202,7 +202,7 @@
         {
             "path": "app/Views/admin/_nav.php",
             "bytes": 544,
-            "sha256": "6109c4095f04301df26d883982596c81cb444c4c2916bfac5820ac6aa3d883c3"
+            "sha256": "5131c832c482dae13d98d08be3524b912b1b3a98878d8b734c911d478e1a0af6"
         },
         {
             "path": "app/Views/admin/home.php",
@@ -216,8 +216,8 @@
         },
         {
             "path": "app/Views/auth/login.php",
-            "bytes": 1596,
-            "sha256": "894c932d63cc781e401a27b10722e8937d86c53fda778b41114d1e6c16a34703"
+            "bytes": 1834,
+            "sha256": "0937c927bfd9cb0359285e92b0d1f93ba16e6a8aec482d0467b6362a864169b8"
         },
         {
             "path": "app/Views/auth/register.php",
@@ -256,13 +256,13 @@
         },
         {
             "path": "app/Views/layout.php",
-            "bytes": 4393,
-            "sha256": "465256eadfe541307a82a8acbae9ff0eef059648a6257dee6b054cf0a5d0e3e2"
+            "bytes": 5262,
+            "sha256": "c4a9c323d45c4fc525045f09224e4550a82cea30ededfd12d0fd616417a40dfa"
         },
         {
             "path": "app/Views/legal.php",
-            "bytes": 5701,
-            "sha256": "f4f8e0c73f76d4782b1ba6063c7daa9c2c196bac795bf51ec7b5a5dadf52a496"
+            "bytes": 5979,
+            "sha256": "fdc47672a0c2c90effa68f254760cc029c777f9f3a36681d27b247c91dbf57ff"
         },
         {
             "path": "app/Views/links/audit.php",
@@ -311,8 +311,8 @@
         },
         {
             "path": "config/config.php",
-            "bytes": 4088,
-            "sha256": "29b7620102c575398dea16faa848540c7bce86ea25f06240cc3dca97760c1bc3"
+            "bytes": 4215,
+            "sha256": "17b466732e54441514876444ef969b865cbcaa58efb4d0c03ffaa88c851efeac"
         },
         {
             "path": "data/.gitkeep",
@@ -326,8 +326,8 @@
         },
         {
             "path": "install/index.php",
-            "bytes": 30016,
-            "sha256": "61235b909a07ff2223cce947aff9afb5a3036d4dd9e29424d7c12b610d1bb9e5"
+            "bytes": 29873,
+            "sha256": "c6dd10b5275e3b47a1d46bddf147fc6e4b460382fb4380e7ebd983b4ad19d102"
         },
         {
             "path": "public/.htaccess",

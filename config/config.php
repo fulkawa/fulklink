@@ -84,9 +84,11 @@ return [
     ],
 
     'site' => [
-        'company'  => $env('COMPANY', '南京斯服叶落网络科技有限公司'),
+        /* 默认值一律留空：这两项会进开源包，写死等于把公司名和 QQ 发给每个客户。
+           线上由 .env 的 COMPANY / SUPPORT_QQ 覆盖。 */
+        'company'  => $env('COMPANY', ''),
         'icp'      => $env('ICP_BEIAN', ''),
-        'support'  => $env('SUPPORT_QQ', '3432511759'),
+        'support'  => $env('SUPPORT_QQ', ''),
         'email'    => $env('SUPPORT_EMAIL', 'fulkteam@fulkwl.cn'),
         'short'    => $env('SHORT_DOMAIN', ''),
     ],

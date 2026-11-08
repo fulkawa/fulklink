@@ -9,6 +9,10 @@
 
 English: FulkLink is a self-hosted URL shortener written in plain PHP 8 + MySQL 5.7+, with zero dependencies. Features short links, QR codes, click analytics, password-protected links, expiry, click caps, groups and CSV export. Click IPs are stored as salted hashes only. Licensed under AGPL-3.0.
 
+| 短链列表 | 点击统计 |
+|---|---|
+| ![短链列表](docs/shots/02-links.png) | ![点击统计](docs/shots/04-stats.png) |
+
 ---
 
 ## 为什么又造一个短链系统

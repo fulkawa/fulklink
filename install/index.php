@@ -368,9 +368,9 @@ $form = [
     'db_name'     => 'fulklink',
     'db_user'     => '',
     'db_pass'     => '',
-    'site_name'   => 'FulkLink 福链',
+    'site_name'   => '我的短链',
     'site_url'    => lp_guess_url(),
-    'support_qq'  => '3432511759',
+    'support_qq'  => '',
     'admin_email' => '',
     'admin_pass'  => '',
     'admin_pass2' => '',
@@ -567,7 +567,6 @@ pre.env{background:#0c1015;border:1px solid var(--line);border-radius:9px;paddin
     </div>
     <div class="foot">
       <a class="btn ghost" href="/">进入站点</a>
-      <span class="note">客服 QQ 3432511759</span>
     </div>
   </div>
 
@@ -623,7 +622,6 @@ pre.env{background:#0c1015;border:1px solid var(--line);border-radius:9px;paddin
 
     <div class="foot">
       <a class="btn" href="/">打开站点首页</a>
-      <span class="note">客服 QQ 3432511759</span>
     </div>
   </div>
 
@@ -748,6 +746,6 @@ pre.env{background:#0c1015;border:1px solid var(--line);border-radius:9px;paddin
 <?php endif; ?>
 </div>
 
-<div class="page-foot">FulkLink 福链 · 安装向导 v<?= h(FL_INSTALL_VERSION) ?> · 客服 QQ 3432511759</div>
+<div class="page-foot">FulkLink 福链 · 安装向导 v<?= h(FL_INSTALL_VERSION) ?></div>
 </body>
 </html>

@@ -16,6 +16,14 @@ $siteName = (string) cfg('app.name');
 $fullTitle = $pageTitle !== '' ? $pageTitle . ' · ' . $siteName : $siteName . ' · ' . cfg('app.tagline');
 $me = \App\Auth::user();
 $isClient = \App\Cloud\Mode::isClient();
+
+/*
+ * 导航按能力出现，不按「有没有写死」出现。
+ * 开源版能力锁在 Free 档，域名、团队两条自然就不渲染了——
+ * 否则客户装完点进去是 404 或者一句「需要授权」。
+ */
+$canDomains = $isClient && \App\Cloud\Gate::allows('domains.custom');
+$canTeam = $isClient && \App\Cloud\Gate::allows('members.multi');
 ?>
 <!doctype html>
 <html lang="zh-CN">
@@ -39,8 +47,12 @@ $isClient = \App\Cloud\Mode::isClient();
       <?php if ($isClient): ?>
         <a class="<?= $nav === 'links' ? 'on' : '' ?>" href="<?= path('/links') ?>">短链</a>
         <a class="<?= $nav === 'new' ? 'on' : '' ?>" href="<?= path('/links/new') ?>">新建</a>
+        <?php if ($canDomains): ?>
         <a class="<?= $nav === 'domains' ? 'on' : '' ?>" href="<?= path('/domains') ?>">域名</a>
+        <?php endif; ?>
+        <?php if ($canTeam): ?>
         <a class="<?= $nav === 'team' ? 'on' : '' ?>" href="<?= path('/team') ?>">团队</a>
+        <?php endif; ?>
         <a class="<?= $nav === 'docs' ? 'on' : '' ?>" href="<?= path('/docs') ?>">使用说明</a>
       <?php else: ?>
         <a class="<?= $nav === 'home' ? 'on' : '' ?>" href="<?= path('/') ?>">产品</a>
@@ -74,13 +86,19 @@ $isClient = \App\Cloud\Mode::isClient();
   <div class="wrap foot-inner">
     <div class="foot-col">
       <div class="foot-brand"><?= e($siteName) ?></div>
+      <?php if (cfg('site.company')): ?>
       <div class="tiny dim"><?= e(cfg('site.company')) ?></div>
+      <?php endif; ?>
     </div>
     <div class="foot-col foot-links">
       <?php if ($isClient): ?>
         <a href="<?= path('/links') ?>">短链</a>
+        <?php if ($canDomains): ?>
         <a href="<?= path('/domains') ?>">域名</a>
+        <?php endif; ?>
+        <?php if ($canTeam): ?>
         <a href="<?= path('/team') ?>">团队</a>
+        <?php endif; ?>
         <a href="<?= path('/docs') ?>">使用说明</a>
         <a href="<?= path('/legal/terms') ?>">服务条款</a>
       <?php else: ?>
@@ -94,7 +112,12 @@ $isClient = \App\Cloud\Mode::isClient();
       <?php endif; ?>
     </div>
     <div class="foot-col tiny dim">
+      <?php if (cfg('site.support')): ?>
       客服 QQ <?= e(cfg('site.support')) ?><br>
+      <?php endif; ?>
+      <?php if (cfg('site.email')): ?>
+      <a href="mailto:<?= e(cfg('site.email')) ?>"><?= e(cfg('site.email')) ?></a><br>
+      <?php endif; ?>
       <?php if (cfg('site.icp')): ?>
         <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener"><?= e(cfg('site.icp')) ?></a>
       <?php endif; ?>

@@ -12,6 +12,6 @@ $active = $active ?? '';
   <div class="acct-group">配置</div>
   <a class="<?= $active === 'settings' ? 'on' : '' ?>" href="<?= path('/admin/settings') ?>">设置</a>
 
-  <div class="acct-group">出口</div>
+  <div class="acct-group">其他</div>
   <a href="<?= path('/') ?>">回前台</a>
 </nav>

@@ -5,6 +5,18 @@ $company = (string) cfg('site.company');
 $support = (string) cfg('site.support');
 $email = (string) cfg('site.email');
 $updated = '2026-11-08';
+
+/* 联系方式可能是空的（开源版默认不填），拼一个能读的兜底，别出现「客服 QQ  或 」 */
+$contact = '';
+if ($support !== '') {
+    $contact = '客服 QQ ' . $support;
+}
+if ($email !== '') {
+    $contact .= ($contact !== '' ? ' 或 ' : '') . $email;
+}
+if ($contact === '') {
+    $contact = '站点管理员';
+}
 ?>
 <section class="poster-head">
   <div class="wrap">
@@ -40,7 +52,7 @@ $updated = '2026-11-08';
     <p>条款如有修改会更新本页并标注日期。已成立的授权按购买时的条款执行。</p>
 
     <h2>8. 联系方式</h2>
-    <p>客服 QQ <?= e($support) ?>　·　邮箱 <?= e($email) ?></p>
+    <p>联系方式：<?= e($contact) ?></p>
 
   <?php elseif ($doc === 'privacy'): ?>
     <h2>1. 数据在哪</h2>
@@ -62,7 +74,7 @@ $updated = '2026-11-08';
     <p>演示站的账号数据在你注销后 30 天内删除。订单和付款记录按税务要求保留。你自己服务器上的数据由你自己管理和删除。</p>
 
     <h2>6. 联系</h2>
-    <p>数据相关问题联系客服 QQ <?= e($support) ?> 或 <?= e($email) ?>。</p>
+    <p>数据相关问题联系 <?= e($contact) ?>。</p>
 
   <?php else: ?>
     <h2>1. 能退的情况</h2>
@@ -75,7 +87,7 @@ $updated = '2026-11-08';
     <p>订阅版已使用超过 7 天，剩余天数不支持按比例退款。</p>
 
     <h2>3. 怎么申请</h2>
-    <p>带订单号联系客服 QQ <?= e($support) ?>，说明问题和订单号。我们会在 2 个工作日内答复。</p>
+    <p>带订单号联系 <?= e($contact) ?>，说明问题和订单号。我们会在 2 个工作日内答复。</p>
     <p>退款原路退回，到账时间以支付渠道为准，一般 1-7 个工作日。</p>
 
     <h2>4. 争议</h2>
