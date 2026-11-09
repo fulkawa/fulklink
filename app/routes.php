@@ -19,6 +19,7 @@ use App\Controllers\DomainController;
 use App\Controllers\GoController;
 use App\Controllers\LinkController;
 use App\Controllers\PublicController;
+use App\Controllers\UpdateController;
 
 /* 入口。client 模式下直接分流到登录或工作台 */
 $router->get('/', [PublicController::class, 'home']);
@@ -49,6 +50,14 @@ $router->post('/admin/links/action', [AdminController::class, 'linkAction']);
 $router->get('/admin/settings', [AdminController::class, 'settings']);
 $router->post('/admin/settings', [AdminController::class, 'saveSettings']);
 $router->post('/admin/mail-test', [AdminController::class, 'mailTest']);
+
+/* 程序更新不依赖商业云端模块；推送默认关闭并独立验签 */
+$router->get('/admin/update', [UpdateController::class, 'home']);
+$router->post('/admin/update/check', [UpdateController::class, 'check']);
+$router->post('/admin/update/install', [UpdateController::class, 'install']);
+$router->post('/admin/update/rollback', [UpdateController::class, 'rollback']);
+$router->post('/admin/update/config', [UpdateController::class, 'config']);
+$router->post('/api/update/push', [UpdateController::class, 'push']);
 
 /* 短链工作台。顺序上必须排在动态段之前 */
 $router->get('/links', [LinkController::class, 'index']);

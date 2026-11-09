@@ -1,0 +1,72 @@
+name: Publish verified v1.0.3
+
+on:
+  push:
+    tags:
+      - 'v1.0.3'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.repository == 'fulkawa/fulklink'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Download and verify tested package
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(tr -d '\r\n' < VERSION)" = '1.0.3'
+          curl --fail --show-error --silent --proto '=https' --tlsv1.2 --max-time 120 \
+            'https://lp.fulkteam.cn/releases/fulklink-open-1.0.3.zip' \
+            --output fulklink-open-1.0.3.zip
+          printf '%s  %s\n' 'ac5092c66562a6a449b539d418986f30981d620f74ffa553d90f34169a1a3652' \
+            'fulklink-open-1.0.3.zip' > fulklink-open-1.0.3.zip.sha256
+          sha256sum --check fulklink-open-1.0.3.zip.sha256
+          test "$(stat -c %s fulklink-open-1.0.3.zip)" = '192301'
+          python3 - <<'PY'
+          import hashlib, json, pathlib, zipfile
+          root = pathlib.Path('.')
+          manifest = json.loads((root / 'MANIFEST.json').read_text())
+          assert manifest['version'] == '1.0.3' and manifest['edition'] == 'open'
+          with zipfile.ZipFile('fulklink-open-1.0.3.zip') as archive:
+              assert archive.read('MANIFEST.json') == (root / 'MANIFEST.json').read_bytes()
+              assert archive.read('VERSION').strip() == b'1.0.3'
+              for entry in manifest['files']:
+                  data = archive.read(entry['path'])
+                  assert len(data) == entry['bytes']
+                  assert hashlib.sha256(data).hexdigest() == entry['sha256']
+                  assert data == (root / entry['path']).read_bytes()
+          print('Verified package, manifest and tagged source are identical.')
+          PY
+      - name: Publish release with verified assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release create 'v1.0.3' \
+            'fulklink-open-1.0.3.zip' 'fulklink-open-1.0.3.zip.sha256' \
+            --repo "$GITHUB_REPOSITORY" --verify-tag \
+            --title 'FulkLink 开源版 1.0.3 — 云端更新与签名推送' \
+            --notes '新增后台检查更新、HTTPS下载安装、签名ZIP推送与程序文件回滚。推送默认关闭，由客户站管理员逐站生成密钥并授权。HMAC-SHA256 v2、防重放、严格包清单与文件哈希校验；禁止同版覆盖、降级、跨发行类型更新。更新保留.env、业务数据与客户身份，不重新放回已删除的安装器。
+
+          升级提醒：1.0.2及更早版本需先备份并手工引导升级至1.0.3，后续才能在线更新。仅支持不改变数据库结构的包，文件回滚不等于数据库回滚。ZIP上限8 MiB，请求体上限12 MiB，需PHP zip/curl/openssl和可写程序目录。
+
+          验收：核心100项、发行协议38项、客户端HTTP含HTTPS拉取安装30项、cloud上传权限13项、真实TLS推送上传与回滚16项均通过。TLS收发使用同机隔离站点，未声称跨运营商或真实断电验收。
+
+          默认更新源：https://lp.fulkteam.cn/update.json
+          已验证安装包：192301字节
+          SHA-256：ac5092c66562a6a449b539d418986f30981d620f74ffa553d90f34169a1a3652
+
+          完整功能与手工升级步骤见README和CHANGELOG。' \
+            --latest

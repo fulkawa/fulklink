@@ -12,6 +12,7 @@ $active = $active ?? '';
   <a class="<?= $active === 'links' ? 'on' : '' ?>" href="<?= path('/admin/links') ?>">短链</a>
 
   <div class="acct-group">配置</div>
+  <a class="<?= $active === 'update' ? 'on' : '' ?>" href="<?= path('/admin/update') ?>">程序更新</a>
   <a class="<?= $active === 'settings' ? 'on' : '' ?>" href="<?= path('/admin/settings') ?>">设置</a>
 
   <div class="acct-group">其他</div>

@@ -22,6 +22,7 @@ final class Settings
         'mail.pass',
         'sms.aliyun.secret',
         'sms.tencent.secret',
+        'update.push_key',
     ];
 
     /** @var array<string,string>|null 原始密文缓存 */
@@ -70,7 +71,10 @@ final class Settings
             try {
                 Db::exec('DELETE FROM `settings` WHERE `k` = ?', [$key]);
             } catch (\Throwable $e) {
-                // 表还没建就当没写
+                // 更新密钥删除失败必须阻止事务提交，不能报告已撤销。
+                if (str_starts_with($key, 'update.')) {
+                    throw new \RuntimeException('更新配置删除失败。', 0, $e);
+                }
             }
             unset(self::$cache[$key]);
             return;

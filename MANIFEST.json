@@ -2,12 +2,12 @@
     "product": "fulklink",
     "edition": "open",
     "title": "开源版",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "php_min": "8.0",
-    "built_at": "2026-11-09T01:15:18+08:00",
-    "total_files": 73,
-    "total_bytes": 450311,
-    "root_sha256": "fdd5ec0c0ea32e9d7d64ae550b4302683dbf1775d67dc54b46f7e7ddc15e1edd",
+    "built_at": "2026-11-09T02:07:38+08:00",
+    "total_files": 76,
+    "total_bytes": 531708,
+    "root_sha256": "9e335d335d86669de895c5b4fcd83acd57440f7fc5e2e5c67b13a74a02410e71",
     "files": [
         {
             "path": ".env.example",
@@ -17,7 +17,7 @@
         {
             "path": "VERSION",
             "bytes": 6,
-            "sha256": "9fd28642d3aca191e5c7fc2383cfd6fabb2aac8743f029dabb8989ac584e31bc"
+            "sha256": "f5e5c9534532840fcd45bb002e69ed85c61dba2753450e26b448b7df1481e24d"
         },
         {
             "path": "app/Auth.php",
@@ -110,6 +110,11 @@
             "sha256": "0494fb956493c9f329ddc706e519de955857dac8fc1dc8dcbae1f7969d7bc8af"
         },
         {
+            "path": "app/Controllers/UpdateController.php",
+            "bytes": 15619,
+            "sha256": "dd5ac5c84dfee7ac7deece4d5e7bca2e0bd4a88238f1fffce01bb00ee0ee9940"
+        },
+        {
             "path": "app/Crypto.php",
             "bytes": 2608,
             "sha256": "a357bec8b0946fc4f25c90ce57759f0ee28bd010f87fe3d8ab7c01716d2894d3"
@@ -166,8 +171,8 @@
         },
         {
             "path": "app/Settings.php",
-            "bytes": 6001,
-            "sha256": "c663de5a08ac05332d3a48f6f79f6166d446269d1e5da5d115bce424032dede3"
+            "bytes": 6240,
+            "sha256": "38f5287084307d5dc94ed3791aec75f61862dd005acfecbe793d18adfd55cb69"
         },
         {
             "path": "app/Shorten.php",
@@ -183,6 +188,11 @@
             "path": "app/Ua.php",
             "bytes": 6109,
             "sha256": "2d26530d3547770c3c4dde1186c78d75b9b19a7db72a7d43d5cb85b605c3e6bf"
+        },
+        {
+            "path": "app/Updater.php",
+            "bytes": 47991,
+            "sha256": "da9d0cd6f194d7e70131dbb51d1dc97dcbe0194874ddeab4a6d74851d5ee6373"
         },
         {
             "path": "app/View.php",
@@ -201,8 +211,8 @@
         },
         {
             "path": "app/Views/admin/_nav.php",
-            "bytes": 740,
-            "sha256": "ed9b2b2068359586a6446e62dbd29861aae728d7e26ef9e62c284b0d4c6d6c79"
+            "bytes": 846,
+            "sha256": "ed2c4291fb89c39819a41312733947c513c65f68246d20c649bbb6a63b55e520"
         },
         {
             "path": "app/Views/admin/home.php",
@@ -218,6 +228,11 @@
             "path": "app/Views/admin/settings.php",
             "bytes": 6556,
             "sha256": "f802519cabedb499596963a018495c5d92af3e07b934c3163c66fd585c4a18e3"
+        },
+        {
+            "path": "app/Views/admin/update.php",
+            "bytes": 14121,
+            "sha256": "a05707802dc7af4276db05822c222e567542efa0f93da94dd203bfd0a8cbf1b6"
         },
         {
             "path": "app/Views/admin/users.php",
@@ -321,13 +336,13 @@
         },
         {
             "path": "app/routes.php",
-            "bytes": 4293,
-            "sha256": "5a99de310aaa6c9df5645ed1fb77eb449f89b183e10a69ffa13ff2ed58bb7a25"
+            "bytes": 4858,
+            "sha256": "c5398dce0a4f1d2047c45e13b3a0cec7d1780af453c98decdeeb817cd59fa033"
         },
         {
             "path": "config/config.php",
-            "bytes": 4215,
-            "sha256": "17b466732e54441514876444ef969b865cbcaa58efb4d0c03ffaa88c851efeac"
+            "bytes": 4679,
+            "sha256": "377e8218f71e29fec48629c837ded2b4a3120d29c2d85d96da44d1862535f6fc"
         },
         {
             "path": "data/.gitkeep",
@@ -361,8 +376,8 @@
         },
         {
             "path": "public/index.php",
-            "bytes": 712,
-            "sha256": "8c4ed06831d950137c5b231ceb05917ea2561718487b6f8786a8cde620cac4f8"
+            "bytes": 3004,
+            "sha256": "05dfa5ab8983e04fd5f2094f02a52db8ee8aa2507730ab83042850ca3f7baf47"
         },
         {
             "path": "public/install.php",

@@ -38,7 +38,17 @@ return [
         'debug'     => $bool('APP_DEBUG', false),
         'timezone'  => $env('APP_TIMEZONE', 'Asia/Shanghai'),
         'key'       => $env('APP_KEY', ''),
-        'version'   => '1.0.0',
+        /* 版本跟着根目录 VERSION 文件走，云端更新覆盖包之后 /health 才会报新版本 */
+        'version'   => (static function (): string {
+            $file = dirname(__DIR__) . '/VERSION';
+            if (is_file($file)) {
+                $v = trim((string) @file_get_contents($file));
+                if ($v !== '' && preg_match('/^[0-9][0-9A-Za-z.\-]*$/', $v)) {
+                    return $v;
+                }
+            }
+            return '1.0.0';
+        })(),
         /* cloud=官网兼云端，client=客户站连回云端。同一套代码两种角色 */
         'mode'      => $env('APP_MODE', 'cloud'),
     ],
