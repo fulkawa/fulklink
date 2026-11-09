@@ -1,7 +1,12 @@
 name: Publish verified v1.0.3
 
 on:
+  workflow_dispatch:
   push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/release-1.0.3.yml'
     tags:
       - 'v1.0.3'
 
@@ -9,7 +14,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release-v1.0.3
   cancel-in-progress: false
 
 jobs:
@@ -20,6 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
+          ref: refs/tags/v1.0.3
           persist-credentials: false
       - name: Download and verify tested package
         shell: bash
@@ -54,6 +60,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          if gh release view 'v1.0.3' --repo "$GITHUB_REPOSITORY" --json tagName --jq '.tagName'; then
+            mkdir -p "$RUNNER_TEMP/existing-release"
+            gh release download 'v1.0.3' --repo "$GITHUB_REPOSITORY" \
+              --pattern 'fulklink-open-1.0.3.zip*' --dir "$RUNNER_TEMP/existing-release"
+            cmp 'fulklink-open-1.0.3.zip' "$RUNNER_TEMP/existing-release/fulklink-open-1.0.3.zip"
+            cmp 'fulklink-open-1.0.3.zip.sha256' "$RUNNER_TEMP/existing-release/fulklink-open-1.0.3.zip.sha256"
+            exit 0
+          fi
           gh release create 'v1.0.3' \
             'fulklink-open-1.0.3.zip' 'fulklink-open-1.0.3.zip.sha256' \
             --repo "$GITHUB_REPOSITORY" --verify-tag \
