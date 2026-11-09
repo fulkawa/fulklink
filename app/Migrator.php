@@ -15,6 +15,9 @@ final class Migrator
     /** 加一次结构变更就把这个数字加一 */
     public const VERSION = 8;
 
+    /** 本次迁移里不可忽略的 DDL/结构查询失败。非空则禁止推进版本标记 */
+    private static array $failures = [];
+
     private static function versionFile(): string
     {
         return BASE_PATH . '/data/.schema-ver';
@@ -27,10 +30,49 @@ final class Migrator
         if ($current >= self::VERSION) {
             return;
         }
+
+        self::$failures = [];
         self::run($current);
-        if (is_dir(dirname($file)) && is_writable(dirname($file))) {
-            @file_put_contents($file, (string) self::VERSION);
+
+        /*
+         * 早先所有 DDL helper 都吞异常，run() 一返回就无条件把版本标记写成 8：
+         * 权限不足、表被锁、ALTER 失败时结构其实没补上，下一次请求却被
+         * 「$current >= VERSION」直接放行，缺的列永久不再补。现在失败就留着
+         * 旧标记，等下次请求重试，并把失败明细写进日志。
+         */
+        if (self::$failures !== []) {
+            $msg = '结构升级未全部完成，保留版本标记 ' . $current . ' 以便下次重试：'
+                . implode(' | ', array_slice(self::$failures, 0, 8));
+            error_log('[migrate] ' . $msg);
+            Db::log('schema.fail', $msg, ['from' => $current, 'failures' => count(self::$failures)], 'error');
+            return;
         }
+
+        if (is_dir(dirname($file)) && is_writable(dirname($file))) {
+            if (@file_put_contents($file, (string) self::VERSION, LOCK_EX) === false) {
+                error_log('[migrate] 版本标记写入失败：' . $file);
+            }
+        }
+    }
+
+    /**
+     * 幂等重跑撞上「已存在」不算失败；其余 DDL 错误必须阻止版本推进。
+     * 只按错误文本判断，不去猜具体数据库的驱动码。
+     */
+    private static function ddlFailed(string $label, \Throwable $e): void
+    {
+        $msg = $e->getMessage();
+        foreach ([
+            'already exists', 'Duplicate column', 'Duplicate key',
+            'Multiple primary key', "Can't DROP", 'check that column/key exists',
+        ] as $needle) {
+            if (stripos($msg, $needle) !== false) {
+                error_log('[migrate] ' . $label . ' 已存在，跳过：' . $msg);
+                return;
+            }
+        }
+        self::$failures[] = $label . ': ' . mb_substr($msg, 0, 200);
+        error_log('[migrate] ' . $label . ' 失败：' . $msg);
     }
 
     private static function run(int $from): void
@@ -344,14 +386,14 @@ SQL);
         }
     }
 
-    /** 整段 DDL 拆成单条执行，出错只记日志不中断 */
+    /** 整段 DDL 拆成单条执行；失败交给 ddlFailed 判定是否可忽略 */
     private static function runSql(string $sql): void
     {
         foreach (array_filter(array_map('trim', explode(';', $sql))) as $one) {
             try {
                 Db::pdo()->exec($one);
             } catch (\Throwable $e) {
-                error_log('[migrate] DDL 失败：' . $e->getMessage());
+                self::ddlFailed('DDL', $e);
             }
         }
     }
@@ -362,7 +404,7 @@ SQL);
             Db::pdo()->exec($sql);
             Db::log('schema.change', $label);
         } catch (\Throwable $e) {
-            error_log('[migrate] ' . $label . ' 失败：' . $e->getMessage());
+            self::ddlFailed($label, $e);
         }
     }
 
@@ -379,7 +421,7 @@ SQL);
             Db::pdo()->exec($sql);
             Db::log('schema.change', '补充索引 ' . $table . '.' . $index);
         } catch (\Throwable $e) {
-            error_log('[migrate] 索引 ' . $table . '.' . $index . ' 失败：' . $e->getMessage());
+            self::ddlFailed('索引 ' . $table . '.' . $index, $e);
         }
     }
 
@@ -397,7 +439,7 @@ SQL);
             Db::pdo()->exec('ALTER TABLE `' . $table . '` DROP INDEX `' . $index . '`');
             Db::log('schema.change', '移除索引 ' . $table . '.' . $index);
         } catch (\Throwable $e) {
-            error_log('[migrate] 移除索引 ' . $table . '.' . $index . ' 失败：' . $e->getMessage());
+            self::ddlFailed('移除索引 ' . $table . '.' . $index, $e);
         }
     }
 
@@ -410,6 +452,7 @@ SQL);
                 [$table, $column]
             );
         } catch (\Throwable $e) {
+            self::ddlFailed('查询 ' . $table . '.' . $column . ' 可空性', $e);
             return null;
         }
         return $row === null ? null : (strtoupper((string) $row['IS_NULLABLE']) === 'YES');
@@ -423,6 +466,7 @@ SQL);
                 [$table]
             );
         } catch (\Throwable $e) {
+            self::ddlFailed('查询表 ' . $table, $e);
             return false;
         }
     }
@@ -432,6 +476,7 @@ SQL);
         try {
             $rows = Db::all('SHOW COLUMNS FROM `' . $table . '`');
         } catch (\Throwable $e) {
+            self::ddlFailed('查询 ' . $table . ' 字段', $e);
             return [];
         }
         return array_map(static fn ($r) => (string) $r['Field'], $rows);
@@ -446,7 +491,7 @@ SQL);
             Db::pdo()->exec($sql);
             Db::log('schema.change', '补充字段 ' . $table . '.' . $column);
         } catch (\Throwable $e) {
-            error_log('[migrate] ' . $table . '.' . $column . ' 失败：' . $e->getMessage());
+            self::ddlFailed('补充字段 ' . $table . '.' . $column, $e);
         }
     }
 }

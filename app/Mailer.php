@@ -87,13 +87,14 @@ final class Mailer
     private static function connect(array $cfg)
     {
         $scheme = $cfg['secure'] === 'ssl' ? 'ssl' : 'tcp';
+        // 默认校验整条证书链与主机名、不接受自签；
+        // 只有站长显式打开 mail.allow_self_signed 才放宽，供特殊自签环境使用。
+        $allowSelfSigned = (bool) Config::get('mail.allow_self_signed', false);
         $ctx = stream_context_create([
             'ssl' => [
-                // 邮件服务器用自签证书的不少，这里不校验证书链。
-                // 风险有限：连接目标是站长自己填的服务器，不是用户可控输入。
-                'verify_peer'       => false,
-                'verify_peer_name'  => false,
-                'allow_self_signed' => true,
+                'verify_peer'       => !$allowSelfSigned,
+                'verify_peer_name'  => !$allowSelfSigned,
+                'allow_self_signed' => $allowSelfSigned,
             ],
         ]);
         $errno = 0;
@@ -135,6 +136,11 @@ final class Mailer
 
         if ($cfg['user'] === '') {
             return;
+        }
+
+        // 账号密码只能在已建立且证书校验通过的 TLS 上发送；明文连接一律不发认证
+        if ($cfg['secure'] === 'none') {
+            throw new \RuntimeException('当前是明文 SMTP 连接，禁止发送账号密码。把加密方式改成 ssl 或 tls 再发信。');
         }
 
         // 先试 AUTH LOGIN，不行再试 AUTH PLAIN —— 各家服务器支持的不一样

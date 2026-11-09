@@ -175,6 +175,14 @@ final class LinkController
         $ownerId = Workspace::ownerId($user);
         $id = (int) ($params['id'] ?? 0);
 
+        $link = Shorten::find($ownerId, $id);
+        if ($link === null) {
+            return $this->back('/links', '找不到这条链接。', true);
+        }
+        if ((string) $link['status'] === 'blocked') {
+            return $this->back('/links/' . $id . '/edit', '这条链接已被管理员封禁，不能编辑或自行恢复。', true);
+        }
+
         $in = [
             'target'     => $req->str('target'),
             'title'      => $req->str('title'),
@@ -185,6 +193,11 @@ final class LinkController
             'expires_at' => $req->str('expires_at'),
             'max_clicks' => $req->int('max_clicks'),
         ];
+        // 状态只接受白名单，显式传入才会被更新
+        $status = $req->str('status');
+        if ($status === 'active' || $status === 'disabled') {
+            $in['status'] = $status;
+        }
         if ($req->str('password') !== '') {
             $in['password'] = $req->str('password');
         }
@@ -232,6 +245,9 @@ final class LinkController
         $link = Shorten::find($ownerId, $id);
         if ($link === null) {
             return $this->back('/links', '找不到这条链接。', true);
+        }
+        if ((string) $link['status'] === 'blocked') {
+            return $this->back('/links', '这条链接已被管理员封禁，不能自行启停。', true);
         }
         $next = (string) $link['status'] === 'active' ? 'disabled' : 'active';
         Db::update('links', ['status' => $next, 'updated_at' => now()], '`id` = ? AND `user_id` = ?', [$id, $ownerId]);

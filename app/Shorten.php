@@ -119,7 +119,9 @@ final class Shorten
 
     public static function allowedHosts(): array
     {
-        $raw = str_replace(['，', ' ', "\n", "\r", "\t"], [',', '', '', '', ''], (string) Settings::get('link.allowed_hosts', ''));
+        // 空白（含换行、全角空格）、中文逗号、英文逗号统一当分隔符，
+        // 兼容「一行一个」和逗号分隔，避免把换行删掉后拼成一个域名
+        $raw = (string) preg_replace('/[\s\x{3000},，]+/u', ',', (string) Settings::get('link.allowed_hosts', ''));
         $out = [];
         foreach (explode(',', $raw) as $one) {
             $one = strtolower(trim($one));
@@ -378,7 +380,14 @@ final class Shorten
         }
 
         if (array_key_exists('status', $in)) {
-            $status = (string) $in['status'] === 'disabled' ? 'disabled' : 'active';
+            // 管理员封禁的记录，普通更新不得把它改回 active/disabled
+            if ((string) $link['status'] === 'blocked') {
+                return ['ok' => false, 'message' => '这条链接已被管理员封禁，不能修改状态。'];
+            }
+            $status = (string) $in['status'];
+            if ($status !== 'active' && $status !== 'disabled') {
+                return ['ok' => false, 'message' => '状态值不对。'];
+            }
             $set['status'] = $status;
             $detail[] = $status === 'disabled' ? '已停用' : '已启用';
         }
@@ -414,7 +423,8 @@ final class Shorten
             case 'enable':
             case 'disable':
                 $status = $action === 'enable' ? 'active' : 'disabled';
-                $n = Db::exec("UPDATE `links` SET `status` = ?, `updated_at` = ? WHERE `user_id` = ? AND `id` IN ($in)", array_merge([$status, now()], $params));
+                // 跳过管理员封禁的记录：前台批量启停不能把封禁链接改回普通状态
+                $n = Db::exec("UPDATE `links` SET `status` = ?, `updated_at` = ? WHERE `user_id` = ? AND `id` IN ($in) AND `status` <> 'blocked'", array_merge([$status, now()], $params));
                 Workspace::audit($ownerId, 'link.bulk.' . $action, 0, count($ids) . ' 条');
                 return ['ok' => $n, 'skipped' => count($ids) - $n];
 

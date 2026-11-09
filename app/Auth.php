@@ -280,13 +280,19 @@ final class Auth
         Db::exec('DELETE FROM `sessions` WHERE `user_id` = ?', [$userId]);
     }
 
+    /** 固定长度的限流键，避免长标识被截断后写入与查询对不上 */
+    private static function failKey(string $ident): string
+    {
+        return 'authfail:' . hash('sha256', self::normalizeIdent($ident));
+    }
+
     private static function recordFail(string $ident): void
     {
         try {
             Db::insert('events', [
                 'level'      => 'warn',
                 'kind'       => 'auth.fail',
-                'message'    => mb_substr($ident, 0, 180),
+                'message'    => self::failKey($ident),
                 'meta'       => json_encode(['ip' => (new Request())->ip()], JSON_UNESCAPED_UNICODE),
                 'created_at' => now(),
             ]);
@@ -299,7 +305,7 @@ final class Auth
         try {
             $n = (int) Db::val(
                 'SELECT COUNT(*) FROM `events` WHERE `kind` = ? AND `message` = ? AND `created_at` >= ?',
-                ['auth.fail', $ident, date('Y-m-d H:i:s', time() - self::FAIL_WINDOW)],
+                ['auth.fail', self::failKey($ident), date('Y-m-d H:i:s', time() - self::FAIL_WINDOW)],
                 0
             );
         } catch (\Throwable $e) {

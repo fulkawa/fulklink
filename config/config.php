@@ -31,6 +31,9 @@ $bool = static function (string $key, bool $default = false): bool {
 
 return [
     'app' => [
+        /* 可信代理 CIDR 列表，逗号分隔。留空 = 只信 REMOTE_ADDR；
+           仅当来源 IP 命中这些网段时才解析 X-Forwarded-For / X-Forwarded-Proto。 */
+        'trusted_proxies' => $env('APP_TRUSTED_PROXIES', ''),
         'name'      => $env('SITE_NAME', 'FulkLink 福链'),
         'url'       => rtrim((string) $env('SITE_URL', 'http://localhost'), '/'),
         'tagline'   => $env('SITE_TAGLINE', '短链、二维码、跳转记录'),
@@ -85,6 +88,8 @@ return [
     ],
 
     'mail' => [
+        /* 默认关闭：仅当 SMTP 使用受控自签证书时才显式开启，避免关闭证书身份校验。 */
+        'allow_self_signed' => $bool('MAIL_ALLOW_SELF_SIGNED', false),
         'host' => $env('SMTP_HOST', ''),
         'port' => (int) $env('SMTP_PORT', '465'),
         'user' => $env('SMTP_USER', ''),

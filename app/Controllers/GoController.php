@@ -34,14 +34,7 @@ final class GoController
     public function r(array $params = []): Response
     {
         $slug = (string) ($params['slug'] ?? '');
-        $link = Shorten::bySlug($slug, '');
-        if ($link === null) {
-            // 主域名上没找到，再看是不是挂在自定义域名下的同名后缀
-            $host = (new Request())->host();
-            if ($host !== '' && $host !== Shorten::defaultHost()) {
-                $link = Shorten::bySlug($slug, $host);
-            }
-        }
+        $link = $this->resolveForR($slug, new Request());
         if ($link === null) {
             return $this->notFound('这个短链不存在，或者已经被删除。');
         }
@@ -74,13 +67,7 @@ final class GoController
     {
         $req = new Request();
         $slug = (string) ($params['slug'] ?? '');
-        $link = Shorten::bySlug($slug, '');
-        if ($link === null) {
-            $host = $req->host();
-            if ($host !== '' && $host !== Shorten::defaultHost()) {
-                $link = Shorten::bySlug($slug, $host);
-            }
-        }
+        $link = $this->resolveForR($slug, $req);
         if ($link === null) {
             return $this->notFound('这个短链不存在。');
         }
@@ -112,6 +99,18 @@ final class GoController
     }
 
     // ---------------- 内部 ----------------
+
+    /**
+     * GET /r/{slug} 与 POST 密码提交共用：按当前请求 Host 精确确定 domain，
+     * 主域请求只查空 domain、自定义域只查该 Host，禁止跨域回退。
+     * 根路径 /{slug} 不走这里（root() 已按 Host 查并校验 verified）。
+     */
+    private function resolveForR(string $slug, Request $req): ?array
+    {
+        $host = $req->host();
+        $domain = ($host === '' || $host === Shorten::defaultHost()) ? '' : $host;
+        return Shorten::bySlug($slug, $domain);
+    }
 
     private function dispatch(array $link): Response
     {

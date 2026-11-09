@@ -286,7 +286,7 @@ final class AdminController
             $like = '%' . $q . '%';
             array_push($args, $like, $like, $like);
         }
-        if ($status === 'active' || $status === 'disabled') {
+        if ($status === 'active' || $status === 'disabled' || $status === 'blocked') {
             $where[] = '`l`.`status` = ?';
             $args[] = $status;
         }
@@ -342,11 +342,14 @@ final class AdminController
 
         switch ($act) {
             case 'disable':
-                Db::exec("UPDATE `links` SET `status` = 'disabled', `updated_at` = ? WHERE `id` = ?", [now(), $id]);
-                Db::log('admin.link', '停用短链 #' . $id . ' /' . $link['slug'], ['by' => Auth::id()]);
-                $msg = '已停用 /' . $link['slug'] . '，访问会显示已下线。';
+                // 管理员封禁必须用独立状态：'disabled' 与用户自己的启停共用，
+                // 原实现会让链接所有者在前台 toggle/bulk 一次就恢复跳转。
+                Db::exec("UPDATE `links` SET `status` = 'blocked', `updated_at` = ? WHERE `id` = ?", [now(), $id]);
+                Db::log('admin.link', '管理员封禁短链 #' . $id . ' /' . $link['slug'], ['by' => Auth::id()]);
+                $msg = '已封禁 /' . $link['slug'] . '，访问会显示已下线，链接所有者不能自行恢复。';
                 break;
             case 'enable':
+                // 只有管理员入口能解除封禁；前台更新与批量操作会跳过 blocked 状态。
                 Db::exec("UPDATE `links` SET `status` = 'active', `updated_at` = ? WHERE `id` = ?", [now(), $id]);
                 Db::log('admin.link', '启用短链 #' . $id . ' /' . $link['slug'], ['by' => Auth::id()]);
                 $msg = '已启用 /' . $link['slug'] . '。';

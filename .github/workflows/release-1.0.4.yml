@@ -1,0 +1,93 @@
+name: Publish verified v1.0.4
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/release-1.0.4.yml'
+    tags:
+      - 'v1.0.4'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-v1.0.4
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.repository == 'fulkawa/fulklink'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: refs/tags/v1.0.4
+          persist-credentials: false
+      - name: Download and verify tested package
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(tr -d '\r\n' < VERSION)" = '1.0.4'
+          curl --fail --show-error --silent --proto '=https' --tlsv1.2 --max-time 120 \
+            'https://lp.fulkteam.cn/releases/fulklink-open-1.0.4.zip' \
+            --output fulklink-open-1.0.4.zip
+          printf '%s  %s\n' 'e32447b2cfa95c60ce76ba3dabca49c3b47c36b380c91f895e93cdaeb67a434f' \
+            'fulklink-open-1.0.4.zip' > fulklink-open-1.0.4.zip.sha256
+          sha256sum --check fulklink-open-1.0.4.zip.sha256
+          test "$(stat -c %s fulklink-open-1.0.4.zip)" = '192540'
+          python3 - <<'PY'
+          import hashlib, json, pathlib, zipfile
+          root = pathlib.Path('.')
+          manifest = json.loads((root / 'MANIFEST.json').read_text())
+          assert manifest['version'] == '1.0.4' and manifest['edition'] == 'open'
+          assert manifest['total_files'] == 76
+          assert manifest['built_at'] == '2026-11-09T21:00:00+08:00'
+          with zipfile.ZipFile('fulklink-open-1.0.4.zip') as archive:
+              assert archive.read('MANIFEST.json') == (root / 'MANIFEST.json').read_bytes()
+              assert archive.read('VERSION').strip() == b'1.0.4'
+              for entry in manifest['files']:
+                  data = archive.read(entry['path'])
+                  assert len(data) == entry['bytes']
+                  assert hashlib.sha256(data).hexdigest() == entry['sha256']
+                  assert data == (root / entry['path']).read_bytes()
+          print('Verified package, manifest and tagged source are identical.')
+          PY
+      - name: Publish release with verified assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view 'v1.0.4' --repo "$GITHUB_REPOSITORY" --json tagName --jq '.tagName'; then
+            mkdir -p "$RUNNER_TEMP/existing-release"
+            gh release download 'v1.0.4' --repo "$GITHUB_REPOSITORY" \
+              --pattern 'fulklink-open-1.0.4.zip*' --dir "$RUNNER_TEMP/existing-release"
+            cmp 'fulklink-open-1.0.4.zip' "$RUNNER_TEMP/existing-release/fulklink-open-1.0.4.zip"
+            cmp 'fulklink-open-1.0.4.zip.sha256' "$RUNNER_TEMP/existing-release/fulklink-open-1.0.4.zip.sha256"
+            exit 0
+          fi
+          gh release create 'v1.0.4' \
+            'fulklink-open-1.0.4.zip' 'fulklink-open-1.0.4.zip.sha256' \
+            --repo "$GITHUB_REPOSITORY" --verify-tag \
+            --title 'FulkLink 开源版 1.0.4 — 安全修复合集（需手工升级）' \
+            --notes '本版为安全修复合集，需手工升级；默认更新源 https://lp.fulkteam.cn/update.json 仍指向 1.0.3，不会自动推送本版。
+
+          原因：本版修改了 app/Migrator.php，1.0.3 客户端自带的在线更新器会比对迁移器哈希，遇到变化即拒绝安装。该校验运行在客户端本地旧代码上，服务端换包无法绕过。恢复在线更新需后续两步引导版本。
+
+          手工升级：①备份站点文件与数据库；②下载本页 ZIP 并解压到临时目录；③覆盖程序文件，保留 .env、data/、客户身份及 MANIFEST.json 的 watermark；④访问 /health 确认 1.0.4，登录后台核对用户与短链；⑤异常时用备份整目录回滚。文件回滚不等于数据库回滚。全新安装直接用安装向导。
+
+          修复要点：易支付回调补商户号/渠道校验与金额精确比对（含主动查单）；验证码旧码不复活；DDL 失败不再推进结构版本；授权 force 不再返回废码；云端资源签名 schema 强制校验与快照发布事务；封禁链接不可自助恢复；未验证域名占位回收；统计去重；returnUrl 补订单凭证。另有代理头、SMTP 证书、CSRF、权限与下载额度等加固。
+
+          可复现构建：SOURCE_DATE_EPOCH=1794229200（2026-11-09 21:00:00 +0800），同参数两次构建 SHA 一致。76 个文件与 v1.0.4 标签源码逐字节一致。
+
+          隔离验收：PHP 8.2 全量 php -l 335/0；静态断言 49/49、行为 10/10；PHP 运行时边界 31/31、mayuan 运行时边界 30/30；核心回归 100/0/0、发包协议 38/0、冒烟 44/44。未做真实断电、生产站部署与 mayuan 部署验收。
+
+          已验证安装包：192540 字节
+          SHA-256：e32447b2cfa95c60ce76ba3dabca49c3b47c36b380c91f895e93cdaeb67a434f
+
+          完整清单与步骤见 CHANGELOG.md 与 README.md。' \
+            --latest

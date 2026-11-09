@@ -30,6 +30,10 @@ final class Features
         'stats.device',
         'click.log',
         'stats.export',
+        // 开源后台本来就提供「目标域名白名单」设置并保存 link.allowed_hosts，
+        // 但此前能力表没放这个码，Shorten::validateUrl 的 Gate 判断永远跳过，
+        // 配置形同虚设。安全能力不应被套餐开关隐式关闭。
+        'target.whitelist',
     ];
 
     /** 人话名字，后台和报错提示用 */

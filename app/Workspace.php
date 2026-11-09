@@ -32,6 +32,8 @@ final class Workspace
             return self::$ownerMemo[$uid];
         }
 
+        // 只认 active：invited（待接受）/ disabled 都不切换数据归属，
+        // 否则光凭一个邮箱就能把别人的账号在下一请求切进自己的工作区
         try {
             $row = Db::one(
                 'SELECT `owner_id` FROM `team_members` WHERE `user_id` = ? AND `status` = ? LIMIT 1',
@@ -116,16 +118,38 @@ final class Workspace
         if ((string) $target['status'] !== 'active') {
             return ['ok' => false, 'message' => '这个账号被停用了，加不进来。'];
         }
+        // 系统管理员不该被挂到别人的工作区里，权限边界会乱
+        if ((string) ($target['role'] ?? 'user') === 'admin') {
+            return ['ok' => false, 'message' => '管理员账号不能被加为成员。'];
+        }
+        // 目标自己就是带成员的工作区所有者：不能同时去当别人的成员
+        $owns = Db::one(
+            'SELECT `id` FROM `team_members` WHERE `owner_id` = ? AND `status` = ? LIMIT 1',
+            [$tid, 'active']
+        );
+        if ($owns !== null) {
+            return ['ok' => false, 'message' => '这个账号自己是带成员的工作区所有者，不能同时加入别人的团队。'];
+        }
 
-        $busy = Db::one('SELECT `owner_id` FROM `team_members` WHERE `user_id` = ? LIMIT 1', [$tid]);
-        if ($busy !== null) {
-            $busyOwner = (int) $busy['owner_id'];
-            return [
-                'ok'      => false,
-                'message' => $busyOwner === $ownerId
-                    ? '这个人已经在你的团队里了。'
-                    : '这个人已经在别的工作区里，一个账号只能属于一个工作区。',
-            ];
+        /*
+         * 只发邀请，不直接入组：status='invited' 不进 ownerId()（那里只认 active），
+         * 必须等目标本人确认。一个账号只能属于一个工作区，任何已有关系都挡住新邀请。
+         */
+        $existing = Db::all('SELECT `owner_id`, `status` FROM `team_members` WHERE `user_id` = ?', [$tid]);
+        foreach ($existing as $row) {
+            $rowOwner = (int) $row['owner_id'];
+            if ($rowOwner === $ownerId) {
+                return [
+                    'ok'      => false,
+                    'message' => (string) $row['status'] === 'active'
+                        ? '这个人已经在你的团队里了。'
+                        : '已经邀请过这个人了，等对方处理，或先移除旧记录再重发。',
+                ];
+            }
+            if ((string) $row['status'] === 'active') {
+                return ['ok' => false, 'message' => '这个人已经在别的工作区里，一个账号只能属于一个工作区。'];
+            }
+            return ['ok' => false, 'message' => '这个账号在别的工作区还有待处理的关系，一个账号只能属于一个工作区。'];
         }
 
         $limit = self::limit('members');
@@ -138,19 +162,78 @@ final class Workspace
                 'owner_id'   => $ownerId,
                 'user_id'    => $tid,
                 'role'       => 'member',
-                'status'     => 'active',
+                'status'     => 'invited',
                 'created_at' => now(),
             ]);
         } catch (\PDOException $e) {
             if ((string) $e->getCode() === '23000') {
-                return ['ok' => false, 'message' => '这个人已经在团队里了。'];
+                return ['ok' => false, 'message' => '已经邀请过这个人了。'];
             }
             throw $e;
         }
 
-        Db::log('team.add', '加入成员 #' . $tid, ['owner_id' => $ownerId, 'user_id' => $tid]);
-        self::audit($ownerId, 'team.add', 0, '加入成员 ' . Auth::identOf($target));
-        return ['ok' => true, 'message' => '已加入：' . Auth::identOf($target) . '。让对方刷新页面就能看到你的链接。'];
+        Db::log('team.invite', '发出入组邀请 #' . $tid, ['owner_id' => $ownerId, 'user_id' => $tid]);
+        self::audit($ownerId, 'team.invite', 0, '邀请 ' . Auth::identOf($target));
+        return ['ok' => true, 'message' => '邀请已发给 ' . Auth::identOf($target) . '，等对方在「团队」页接受后才会加入。'];
+    }
+
+    /** 发给某用户的待接受邀请（ownerId() 查不到这些记录，得单独取） */
+    public static function invitesFor(int $userId): array
+    {
+        return Db::all(
+            'SELECT m.`id` AS m_id, m.`owner_id`, m.`created_at` AS invited_at,
+                    u.`email`, u.`phone`, u.`name`
+               FROM `team_members` m JOIN `users` u ON u.`id` = m.`owner_id`
+              WHERE m.`user_id` = ? AND m.`status` = ?
+              ORDER BY m.`id` ASC',
+            [$userId, 'invited']
+        );
+    }
+
+    /**
+     * 被邀请人处理自己的邀请。$agree=true 接受，false 拒绝。
+     * user_id 只能来自调用方传入的当前登录者（Auth::id()），查询里写死，
+     * 不接收任何请求参数，保证「只能操作发给自己的邀请」。
+     *
+     * @return array{ok:bool,message:string}
+     */
+    public static function accept(int $userId, int $memberRowId, bool $agree): array
+    {
+        $row = Db::one(
+            'SELECT * FROM `team_members` WHERE `id` = ? AND `user_id` = ? AND `status` = ? LIMIT 1',
+            [$memberRowId, $userId, 'invited']
+        );
+        if ($row === null) {
+            return ['ok' => false, 'message' => '没找到这条邀请，或已经处理过了。'];
+        }
+
+        if (!$agree) {
+            Db::exec('DELETE FROM `team_members` WHERE `id` = ?', [$memberRowId]);
+            Db::log('team.invite.reject', '拒绝入组邀请', ['owner_id' => (int) $row['owner_id'], 'user_id' => $userId]);
+            return ['ok' => true, 'message' => '已拒绝这条邀请。'];
+        }
+
+        // 接受前再核一次：期间别被加到别的工作区去
+        $busy = Db::one(
+            'SELECT `id` FROM `team_members` WHERE `user_id` = ? AND `status` = ? AND `id` <> ? LIMIT 1',
+            [$userId, 'active', $memberRowId]
+        );
+        if ($busy !== null) {
+            return ['ok' => false, 'message' => '你已经在别的工作区了，一个账号只能属于一个工作区。'];
+        }
+
+        $ok = Db::exec(
+            'UPDATE `team_members` SET `status` = ? WHERE `id` = ? AND `status` = ?',
+            ['active', $memberRowId, 'invited']
+        ) > 0;
+        if (!$ok) {
+            return ['ok' => false, 'message' => '邀请状态已变化，刷新页面重试。'];
+        }
+        // 同请求内 ownerId 的 memo 作废，避免刚接受还按「自己」算
+        unset(self::$ownerMemo[$userId]);
+        Db::log('team.invite.accept', '接受入组邀请', ['owner_id' => (int) $row['owner_id'], 'user_id' => $userId]);
+        self::audit((int) $row['owner_id'], 'team.invite.accept', 0, '接受邀请 #' . $userId);
+        return ['ok' => true, 'message' => '已加入团队，现在能看到工作区的链接了。'];
     }
 
     public static function remove(int $ownerId, int $memberRowId): bool
@@ -168,9 +251,10 @@ final class Workspace
     public static function setStatus(int $ownerId, int $memberRowId, string $status): bool
     {
         $status = $status === 'disabled' ? 'disabled' : 'active';
+        // invited 走本人确认流程，不能靠 toggle 直接激活；active/disabled 行为保持原样
         return Db::exec(
-            'UPDATE `team_members` SET `status` = ? WHERE `id` = ? AND `owner_id` = ?',
-            [$status, $memberRowId, $ownerId]
+            'UPDATE `team_members` SET `status` = ? WHERE `id` = ? AND `owner_id` = ? AND `status` <> ?',
+            [$status, $memberRowId, $ownerId, 'invited']
         ) > 0;
     }
 

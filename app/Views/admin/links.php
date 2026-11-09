@@ -39,6 +39,7 @@ use App\View;
             <option value="">全部状态</option>
             <option value="active" <?= $status === 'active' ? 'selected' : '' ?>>正常</option>
             <option value="disabled" <?= $status === 'disabled' ? 'selected' : '' ?>>已停用</option>
+            <option value="blocked" <?= $status === 'blocked' ? 'selected' : '' ?>>管理员封禁</option>
           </select>
         </div>
         <div class="full" style="display:flex;gap:8px">
@@ -59,7 +60,7 @@ use App\View;
                 <td class="mono tiny"><?= e(Shorten::shortUrl($l)) ?></td>
                 <td class="tiny dim"><?= e(mb_strimwidth((string) $l['target_url'], 0, 42, '…')) ?></td>
                 <td class="mono tiny"><?= e((string) $l['owner']) ?></td>
-                <td><?= $l['status'] === 'active' ? '<span class="tag ok">正常</span>' : '<span class="tag warn">已停用</span>' ?></td>
+                <td><?= $l['status'] === 'active' ? '<span class="tag ok">正常</span>' : ($l['status'] === 'blocked' ? '<span class="tag warn">管理员封禁</span>' : '<span class="tag warn">已停用</span>') ?></td>
                 <td><?= (int) $l['click_count'] ?></td>
                 <td class="tiny dim"><?= e((string) $l['created_at']) ?></td>
                 <td class="tiny">
@@ -67,7 +68,7 @@ use App\View;
                     <?= Auth::csrfField() ?>
                     <input type="hidden" name="id" value="<?= (int) $l['id'] ?>">
                     <?php if ($l['status'] === 'active'): ?>
-                      <button class="btn tiny" name="act" value="disable" onclick="return confirm('停用后这条短链会显示已下线，确定？')">停用</button>
+                      <button class="btn tiny" name="act" value="disable" onclick="return confirm('封禁后这条短链会显示已下线，链接所有者不能自行恢复，确定？')">封禁</button>
                     <?php else: ?>
                       <button class="btn tiny" name="act" value="enable">启用</button>
                     <?php endif; ?>

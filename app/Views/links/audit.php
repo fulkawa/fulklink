@@ -1,5 +1,6 @@
 <?php
 use App\Shorten;
+use App\View;
 
 /** @var array $rows */
 /** @var int $page */

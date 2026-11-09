@@ -109,17 +109,68 @@ final class Request
 
     public function ip(): string
     {
-        $keys = ['HTTP_CF_CONNECTING_IP', 'HTTP_X_REAL_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'];
-        foreach ($keys as $k) {
-            if (empty($_SERVER[$k])) {
-                continue;
-            }
-            $ip = trim(explode(',', (string) $_SERVER[$k])[0]);
-            if (filter_var($ip, FILTER_VALIDATE_IP)) {
-                return $ip;
+        $remote = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+        $fallback = filter_var($remote, FILTER_VALIDATE_IP) ? $remote : '0.0.0.0';
+        // 默认只信 REMOTE_ADDR；只有它命中可信代理时才解析转发头
+        if (!self::isTrustedProxy($remote)) {
+            return $fallback;
+        }
+        $xff = (string) ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? '');
+        if ($xff !== '') {
+            // 从右向左取第一个非可信 IP，避免客户端伪造的左侧值被采信
+            foreach (array_reverse(explode(',', $xff)) as $one) {
+                $candidate = trim($one);
+                if (filter_var($candidate, FILTER_VALIDATE_IP) && !self::isTrustedProxy($candidate)) {
+                    return $candidate;
+                }
             }
         }
-        return '0.0.0.0';
+        return $fallback;
+    }
+
+    /** REMOTE_ADDR 是否落在配置的可信代理 CIDR 内（未配置时空列表，一律不信） */
+    private static function isTrustedProxy(string $ip): bool
+    {
+        $raw = (string) Config::get('app.trusted_proxies', '');
+        if ($raw === '' || !filter_var($ip, FILTER_VALIDATE_IP)) {
+            return false;
+        }
+        foreach (explode(',', $raw) as $cidr) {
+            $cidr = trim($cidr);
+            if ($cidr !== '' && self::ipInCidr($ip, $cidr)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** 支持 IPv4 / IPv6，CIDR 不带掩码时按精确 IP 处理 */
+    private static function ipInCidr(string $ip, string $cidr): bool
+    {
+        if (strpos($cidr, '/') === false) {
+            return $ip === $cidr;
+        }
+        [$subnet, $bits] = explode('/', $cidr, 2);
+        $bits = (int) $bits;
+        $ipBin = @inet_pton($ip);
+        $netBin = @inet_pton($subnet);
+        if ($ipBin === false || $netBin === false || strlen($ipBin) !== strlen($netBin)) {
+            return false;
+        }
+        $maxBits = strlen($netBin) * 8;
+        if ($bits < 0 || $bits > $maxBits) {
+            return false;
+        }
+        $whole = intdiv($bits, 8);
+        $rem = $bits % 8;
+        if ($whole > 0 && strncmp($ipBin, $netBin, $whole) !== 0) {
+            return false;
+        }
+        if ($rem === 0) {
+            return true;
+        }
+        $mask = (0xFF << (8 - $rem)) & 0xFF;
+        return (ord($ipBin[$whole]) & $mask) === (ord($netBin[$whole]) & $mask);
     }
 
     public function ua(): string
@@ -149,6 +200,11 @@ final class Request
     {
         if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
             return true;
+        }
+        // 转发头同样只在可信代理下采信，否则客户端可伪造 https
+        $remote = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+        if (!self::isTrustedProxy($remote)) {
+            return false;
         }
         return (string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
     }

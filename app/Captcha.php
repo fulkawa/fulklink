@@ -39,6 +39,14 @@ final class Captcha
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
         $now  = time();
 
+        // 重发前把同目标、同用途的未消费旧码全部作废，
+        // 否则新码被消费后旧码又会成为「最新一条」被再次使用。
+        Db::exec(
+            'UPDATE `verification_codes` SET `used_at` = ?
+              WHERE `target` = ? AND `purpose` = ? AND `used_at` IS NULL',
+            [now(), $target, $purpose]
+        );
+
         Db::insert('verification_codes', [
             'target'     => $target,
             'channel'    => $channel === 'sms' ? 'sms' : 'email',
@@ -66,14 +74,18 @@ final class Captcha
             return ['ok' => false, 'message' => '验证码是 6 位数字。'];
         }
 
+        // 取绝对最新一条，不再筛 used_at：否则新码消费后旧码会重新冒出来
         $row = Db::one(
             'SELECT * FROM `verification_codes`
-              WHERE `target` = ? AND `purpose` = ? AND `used_at` IS NULL
+              WHERE `target` = ? AND `purpose` = ?
               ORDER BY `id` DESC LIMIT 1',
             [$target, $purpose]
         );
         if ($row === null) {
             return ['ok' => false, 'message' => '没有有效的验证码，先点「获取验证码」。'];
+        }
+        if (!empty($row['used_at'])) {
+            return ['ok' => false, 'message' => '这个验证码已经用掉了，重新获取一个。'];
         }
         if (strtotime((string) $row['expires_at']) < time()) {
             return ['ok' => false, 'message' => '验证码过期了，重新获取一个。'];

@@ -71,15 +71,41 @@ final class Domains
             }
         }
 
-        $busy = Db::one('SELECT `user_id` FROM `user_domains` WHERE `host` = ? LIMIT 1', [$host]);
+        $busy = Db::one(
+            'SELECT `id`,`user_id`,`verified`,`created_at` FROM `user_domains` WHERE `host` = ? LIMIT 1',
+            [$host]
+        );
         if ($busy !== null) {
-            return [
-                'ok'      => false,
-                'message' => (int) $busy['user_id'] === $ownerId
-                    ? '这个域名已经加过了，直接去验证。'
-                    : '这个域名已经被别的账号绑定。如果是你的，先让对方解绑。',
-                'id'      => 0,
-            ];
+            if ((int) $busy['verified'] === 1) {
+                return [
+                    'ok'      => false,
+                    'message' => (int) $busy['user_id'] === $ownerId
+                        ? '这个域名已经加过了，直接去验证。'
+                        : '这个域名已经被别的账号绑定。如果是你的，先让对方解绑。',
+                    'id'      => 0,
+                ];
+            }
+            if ((int) $busy['user_id'] === $ownerId) {
+                return ['ok' => false, 'message' => '这个域名已经加过了，直接去验证。', 'id' => 0];
+            }
+
+            /*
+             * uk_host 让一个域名只能有一条记录。早先只要有人抢先登记（哪怕从未
+             * 验证）就永久占位，别人再也加不了 —— 无需 DNS 归属即可DoS。
+             * 未验证且超过 24 小时没动静的占位允许回收，不做 schema 变更。
+             */
+            $created = strtotime((string) ($busy['created_at'] ?? ''));
+            if ($created !== false && time() - $created < 86400) {
+                return [
+                    'ok'      => false,
+                    'message' => '这个域名有账号正在验证中，请稍后再试；如果是你的域名，请联系客服处理。',
+                    'id'      => 0,
+                ];
+            }
+            Db::exec('DELETE FROM `user_domains` WHERE `id` = ? AND `verified` = 0', [(int) $busy['id']]);
+            Db::log('domain.reclaim', '回收过期的未验证域名占位 ' . $host, [
+                'previous_owner' => (int) $busy['user_id'],
+            ], 'warn');
         }
 
         $token = bin2hex(random_bytes(16));

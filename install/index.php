@@ -383,7 +383,7 @@ if (is_file($ENVFILE)) {
     $form['db_port']    = $old['DB_PORT']    ?? $form['db_port'];
     $form['db_name']    = $old['DB_NAME']    ?? $form['db_name'];
     $form['db_user']    = $old['DB_USER']    ?? $form['db_user'];
-    $form['db_pass']    = $old['DB_PASS']    ?? $form['db_pass'];
+    // 数据库密码绝不从已有 .env 回填，避免匿名 GET 直接读到
     $form['site_name']  = $old['SITE_NAME']  ?? $form['site_name'];
     $form['site_url']   = $old['SITE_URL']   ?? $form['site_url'];
     $form['support_qq'] = $old['SUPPORT_QQ'] ?? $form['support_qq'];
@@ -686,7 +686,7 @@ pre.env{background:#0c1015;border:1px solid var(--line);border-radius:9px;paddin
         </div>
         <div class="full">
           <label for="db_pass">密码</label>
-          <input type="password" id="db_pass" name="db_pass" value="<?= h($form['db_pass']) ?>" placeholder="数据库密码" autocomplete="new-password">
+          <input type="password" id="db_pass" name="db_pass" value="" placeholder="数据库密码" autocomplete="new-password">
           <div class="hint">密码为空就不用填</div>
         </div>
       </div>

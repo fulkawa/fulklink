@@ -2,32 +2,32 @@
     "product": "fulklink",
     "edition": "open",
     "title": "开源版",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "php_min": "8.0",
-    "built_at": "2026-11-09T02:07:38+08:00",
+    "built_at": "2026-11-09T21:00:00+08:00",
     "total_files": 76,
-    "total_bytes": 531708,
-    "root_sha256": "9e335d335d86669de895c5b4fcd83acd57440f7fc5e2e5c67b13a74a02410e71",
+    "total_bytes": 546645,
+    "root_sha256": "f82faf2cce8fa5b7dfd58c8720e41920f43d8b3a85116a0e017f2930e165b572",
     "files": [
         {
             "path": ".env.example",
-            "bytes": 1126,
-            "sha256": "c96385293ab14848afdb225c108822f8b549838aca87ba607fbd88d0b787ce12"
+            "bytes": 1350,
+            "sha256": "c54eee2f4d713e2c530e66aa83dde575a3293526189bf9e46e7a3a810bb99007"
         },
         {
             "path": "VERSION",
             "bytes": 6,
-            "sha256": "f5e5c9534532840fcd45bb002e69ed85c61dba2753450e26b448b7df1481e24d"
+            "sha256": "d1b77b88f4b9f675a900e4143ac768a21218623cfe1703ca43162388c3271bd6"
         },
         {
             "path": "app/Auth.php",
-            "bytes": 13100,
-            "sha256": "87e4f0b173d556190340ca4e9b0025cc3c9764d29a669f0099c62bbb161c6f9f"
+            "bytes": 13348,
+            "sha256": "e5df5e84818afc03d242eebee6652b174cdf4ebdd93e6d5382d160acbbb6aa0b"
         },
         {
             "path": "app/Captcha.php",
-            "bytes": 6833,
-            "sha256": "f52397a10a57c4996fc61668413a0ad71091cee888f001519dc58ea755ba32bb"
+            "bytes": 7439,
+            "sha256": "0fb85242178ccde769203c7d841e409d951fa8306828758764b9e23c825b30b0"
         },
         {
             "path": "app/Cloud/BlockCache.php",
@@ -41,8 +41,8 @@
         },
         {
             "path": "app/Cloud/Features.php",
-            "bytes": 2752,
-            "sha256": "7dbdd3bf581f471ad1cee1f832de1523709bdfb17e34775726d7585cd4589dc2"
+            "bytes": 3063,
+            "sha256": "58532b6234ef0a62b0766538713b3acf854a4a1d87272dd74f04a803cb2dea54"
         },
         {
             "path": "app/Cloud/Gate.php",
@@ -81,8 +81,8 @@
         },
         {
             "path": "app/Controllers/AdminController.php",
-            "bytes": 15201,
-            "sha256": "f36372aab49cb619359c48ada5026736fdf1c29016522327a39a31942477ec6c"
+            "bytes": 15582,
+            "sha256": "fd0a6a258a9aa8688b5af6f1e7a83388208c4c1aa0b84959373b45d94277b42d"
         },
         {
             "path": "app/Controllers/AuthController.php",
@@ -96,13 +96,13 @@
         },
         {
             "path": "app/Controllers/GoController.php",
-            "bytes": 7287,
-            "sha256": "1e7f048da004592ac48ee97f57318ed34f8da87698ef4e40fa95f92b882bdf23"
+            "bytes": 7309,
+            "sha256": "42d611c69ea75dbf24605e3105fdb0356a452d93b491fac86fa287bf7c74e05d"
         },
         {
             "path": "app/Controllers/LinkController.php",
-            "bytes": 15771,
-            "sha256": "58477c955622d279189d460ea0f38f812513ab158341866213b243e6c3628da2"
+            "bytes": 16520,
+            "sha256": "0bd3ccf67c416744f7f68f2adea0e91bf267852536f484137558ab373157709b"
         },
         {
             "path": "app/Controllers/PublicController.php",
@@ -126,8 +126,8 @@
         },
         {
             "path": "app/Domains.php",
-            "bytes": 9887,
-            "sha256": "224e90ba0ee647b087d81dec0c86763ce35c8d0edde2206194ac73d283f63bd5"
+            "bytes": 11262,
+            "sha256": "71691d61672e5ade0fb65d0c2db32ec9e60c4744eb4d90f3baf097f16b44920c"
         },
         {
             "path": "app/Http.php",
@@ -136,18 +136,18 @@
         },
         {
             "path": "app/LinkStats.php",
-            "bytes": 13577,
-            "sha256": "d7fe1df037d83e733d5a64a7527618e722bd6142b97bacebc9431b8f50d399a9"
+            "bytes": 14093,
+            "sha256": "05706e7c939b3fda6b0a5350358129ced18b7fc4641fd492552497186ec37edb"
         },
         {
             "path": "app/Mailer.php",
-            "bytes": 11387,
-            "sha256": "98552ef6a879a1a90fe3051c186af6759ff012a346e0129214e2de2f92ef682f"
+            "bytes": 11794,
+            "sha256": "1ca80f6d0c1932540bbb38d65089c8c8bfac301aa7089c04ed6a5a2388a5da85"
         },
         {
             "path": "app/Migrator.php",
-            "bytes": 21020,
-            "sha256": "55ebcebbd73052f41a642772c12094e7e2b6394a6b0ddb00f0d088560967aead"
+            "bytes": 23004,
+            "sha256": "994f84438fd940ebdff50f14bffc475e5318637cadcbee9c3fab514ef04356db"
         },
         {
             "path": "app/Plans.php",
@@ -156,8 +156,8 @@
         },
         {
             "path": "app/Request.php",
-            "bytes": 4607,
-            "sha256": "be21fc4e06945bee5abd713b414ac7725ba116dfeb095631ce56cedfab3df3a4"
+            "bytes": 6813,
+            "sha256": "59c67d2250c7f2742c4a2b0f3f37f3aa48546f522a930056cd9472c69f9eeca0"
         },
         {
             "path": "app/Response.php",
@@ -176,8 +176,8 @@
         },
         {
             "path": "app/Shorten.php",
-            "bytes": 27319,
-            "sha256": "a8c44f6463d8265202747afc199bf2d5e6c7f404841e913a57c1673876d6ab05"
+            "bytes": 28025,
+            "sha256": "4c082792ca0a5f323db432ae477cbbdeb05d32489f267b5d623ad110b32c5dce"
         },
         {
             "path": "app/Sms.php",
@@ -221,8 +221,8 @@
         },
         {
             "path": "app/Views/admin/links.php",
-            "bytes": 4358,
-            "sha256": "0250de3c946e17359933f4fc5a6a13f6fc5557cc53bcdb1af8a4409a7cebb2e6"
+            "bytes": 4583,
+            "sha256": "489e69ea08685982c77ea67b66ed14e3557f649877c6a6b81594e6b6258d8f72"
         },
         {
             "path": "app/Views/admin/settings.php",
@@ -296,8 +296,8 @@
         },
         {
             "path": "app/Views/links/audit.php",
-            "bytes": 3623,
-            "sha256": "a6803e0c892d00c17f0d047c2961738f94702cf4531628b77306548979403cbc"
+            "bytes": 3637,
+            "sha256": "b06de5079d4936e0b440653bce72679efd6adc25eef0202d778f040df8c1739c"
         },
         {
             "path": "app/Views/links/form.php",
@@ -321,8 +321,8 @@
         },
         {
             "path": "app/Workspace.php",
-            "bytes": 8524,
-            "sha256": "8e0cf070e3a295216f7b0aa6c659401e907303cf5a78b34dd93d38e44b15ea46"
+            "bytes": 13060,
+            "sha256": "c959886ed8f47cb8083f7570ef3d1dd6a8ce72707e1d465dcd770dd6aba78377"
         },
         {
             "path": "app/bootstrap.php",
@@ -341,8 +341,8 @@
         },
         {
             "path": "config/config.php",
-            "bytes": 4679,
-            "sha256": "377e8218f71e29fec48629c837ded2b4a3120d29c2d85d96da44d1862535f6fc"
+            "bytes": 5116,
+            "sha256": "6bec2a4c84a2d8962aaea4494dc82abd242959941d4565b5319ded9e175e060c"
         },
         {
             "path": "data/.gitkeep",
@@ -356,8 +356,8 @@
         },
         {
             "path": "install/index.php",
-            "bytes": 29873,
-            "sha256": "c6dd10b5275e3b47a1d46bddf147fc6e4b460382fb4380e7ebd983b4ad19d102"
+            "bytes": 29863,
+            "sha256": "0b2fbf92164e9b8afab3c7b20daede66de9c5a59d474574c451691ec695b2bc6"
         },
         {
             "path": "public/.htaccess",

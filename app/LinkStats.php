@@ -35,7 +35,12 @@ final class LinkStats
         $ipHash = self::ipHash($ip);
 
         try {
-            // 爬虫和 10 秒内的重复刷新都不计数，但爬虫还是留一条，方便排查
+            // 爬虫和 10 秒内的重复刷新都不计入统计。
+            // 重复刷新也不写明细：clicks 是所有报表的唯一数据源，早先「不计数但照插明细」
+            // 会让 COUNT(*) 与 links.click_count 变成两套口径 —— 同一个概览页里
+            // 总点击取去重后的整数，今日/近 7 天却取未去重的明细数，互相打架。
+            // 爬虫仍留一条 bot 明细供排查，所有报表都带 device <> 'bot' 过滤。
+            // 存量数据不追溯重算；并发同秒点击的去重仍依赖 10 秒窗口，不是原子锁。
             $counted = !$parsed['bot'];
             if ($counted) {
                 $dup = Db::one(
@@ -43,7 +48,7 @@ final class LinkStats
                     [$linkId, $ipHash, date('Y-m-d H:i:s', time() - self::DEDUP_SECONDS)]
                 );
                 if ($dup !== null) {
-                    $counted = false;
+                    return false;
                 }
             }
 
