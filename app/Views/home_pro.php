@@ -16,6 +16,7 @@ $panel = [
     ['自定义域名', '3'],
 ];
 ?>
+<?php $banner = \App\Config::get('app.demo_banner'); ?>
 <style>
 .fk-pro{--navy:#0f2a4a;--ac:#1d4ed8;--fg:#0f172a;--dim:#64748b;--line:#e2e8f0}
 .fk-pro .fpro-hero{background:linear-gradient(120deg,var(--navy) 0%,#123a6b 60%,#1d4ed8 130%);color:#fff;padding:70px 0 64px}
@@ -34,6 +35,7 @@ $panel = [
 .fk-pro .fpro-bars{margin-top:16px;display:flex;align-items:flex-end;gap:6px;height:52px}
 .fk-pro .fpro-bars i{flex:1;background:linear-gradient(180deg,#60a5fa,#1d4ed8);border-radius:3px 3px 0 0;display:block}
 .fk-pro .fpro-body{max-width:1040px;margin:0 auto;padding:56px 24px 24px;display:grid;grid-template-columns:1fr 1fr;gap:44px}
+.fk-pro .fpro-body.fpro-body-solo{grid-template-columns:1fr;max-width:760px}
 @media(max-width:860px){.fk-pro .fpro-wrap,.fk-pro .fpro-body{grid-template-columns:1fr}}
 .fk-pro .fpro-pt{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid var(--line)}
 .fk-pro .fpro-pt:last-child{border-bottom:0}
@@ -55,7 +57,7 @@ $panel = [
         <p class="fpro-lead">3 个域名、5 个成员、批量与分组、CSV 全量导出，再加一层云端风控。为把短链当正经业务跑的团队准备。</p>
         <div class="fpro-btns">
           <a class="fpro-btn" href="<?= path('/login') ?>">进入演示后台</a>
-          <a class="fpro-btn ghost" href="<?= path('/buy') ?>?plan=pro">¥1,980 / 年</a>
+          <?php if ($banner): ?><a class="fpro-btn ghost" href="<?= path('/buy') ?>?plan=pro">¥1,980 / 年</a><?php endif; ?>
         </div>
       </div>
       <div class="fpro-panel">
@@ -69,17 +71,19 @@ $panel = [
       </div>
     </div>
   </div>
-  <div class="fpro-body">
-    <div>
-      <?php foreach ($points as $pt): ?>
-        <div class="fpro-pt"><div class="no"><?= e($pt[0]) ?></div><div><h3><?= e($pt[1]) ?></h3><p><?= e($pt[2]) ?></p></div></div>
-      <?php endforeach; ?>
+    <div class="fpro-body<?= $banner ? '' : ' fpro-body-solo' ?>">
+      <div>
+        <?php foreach ($points as $pt): ?>
+          <div class="fpro-pt"><div class="no"><?= e($pt[0]) ?></div><div><h3><?= e($pt[1]) ?></h3><p><?= e($pt[2]) ?></p></div></div>
+        <?php endforeach; ?>
+      </div>
+      <?php if ($banner): ?>
+      <div class="fpro-side">
+        <div class="p">¥1,980</div>
+        <div class="u">每年 · 含全部专业版权益</div>
+        <a href="<?= path('/buy') ?>?plan=pro">升级专业版</a>
+        <p class="fpro-demo">演示账号 <b>demo@fulkteam.cn</b><br>密码 <b>FulkDemo2026</b><br>数据每天凌晨自动重置</p>
+      </div>
+      <?php endif; ?>
     </div>
-    <div class="fpro-side">
-      <div class="p">¥1,980</div>
-      <div class="u">每年 · 含全部专业版权益</div>
-      <a href="<?= path('/buy') ?>?plan=pro">升级专业版</a>
-      <p class="fpro-demo">演示账号 <b>demo@fulkteam.cn</b><br>密码 <b>FulkDemo2026</b><br>数据每天凌晨自动重置</p>
-    </div>
-  </div>
 </div>

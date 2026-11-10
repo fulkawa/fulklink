@@ -13,6 +13,7 @@ $feats = [
     ['零依赖部署', 'PHP 8.0+ / MySQL 5.7+，不需要 Composer，不需要 Node，宝塔点几下就能跑。'],
 ];
 ?>
+<?php $banner = \App\Config::get('app.demo_banner'); ?>
 <style>
 .fk-free{--fg:#1f2328;--dim:#57606a;--ac:#0969da;--bg:#f6f8fa;--line:#d0d7de;color:var(--fg)}
 .fk-free .ff-hero{background:var(--bg);border-bottom:1px solid var(--line);padding:64px 0 56px}
@@ -46,9 +47,11 @@ $feats = [
         <a class="ff-btn" href="<?= path('/docs') ?>">安装文档</a>
         <a class="ff-btn" href="https://github.com/fulkawa/fulklink" target="_blank" rel="noopener noreferrer">GitHub 源码</a>
       </div>
+      <?php if ($banner): ?>
       <div class="ff-demo">
         演示账号：<code>demo@fulkteam.cn</code>（管理员）/ <code>user@fulkteam.cn</code>（普通用户）　密码：<code>FulkDemo2026</code>　演示数据每天凌晨 4 点重置。
       </div>
+      <?php endif; ?>
     </div>
   </div>
 </div>

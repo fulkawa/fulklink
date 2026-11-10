@@ -37,6 +37,10 @@ return [
         'name'      => $env('SITE_NAME', 'FulkLink 福链'),
         'url'       => rtrim((string) $env('SITE_URL', 'http://localhost'), '/'),
         'tagline'   => $env('SITE_TAGLINE', '短链、二维码、跳转记录'),
+        /* SHOW_LANDING=1：客户站未登录时先展示落地页（按授权档位渲染），默认关闭直接进登录 */
+        'landing'   => $env('SHOW_LANDING', '') === '1',
+        /* DEMO_BANNER=1：落地页显示价格/购买/演示账号（仅演示站）。客户站即使开落地页也绝不出现销售内容 */
+        'demo_banner' => $env('DEMO_BANNER', '') === '1',
         'env'       => $env('APP_ENV', 'production'),
         'debug'     => $bool('APP_DEBUG', false),
         'timezone'  => $env('APP_TIMEZONE', 'Asia/Shanghai'),

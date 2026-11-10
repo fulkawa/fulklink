@@ -14,6 +14,7 @@ $plans = [
     ['买断', '¥699', '一次付清永久用', '/buy?plan=personal'],
 ];
 ?>
+<?php $banner = \App\Config::get('app.demo_banner'); ?>
 <style>
 .fk-personal{--ac:#0284c7;--ac2:#38bdf8;--fg:#0f172a;--dim:#475569}
 .fk-personal .fp-hero{background:linear-gradient(160deg,#e0f2fe 0%,#f0f9ff 55%,#fff 100%);padding:72px 0 60px;text-align:center}
@@ -47,7 +48,7 @@ $plans = [
       <p class="fp-lead">给个人和小团队的短链工作台：发出去的每条链接都能管、能看、能收回来。装在自己服务器上，不托管、不经过第三方。</p>
       <div class="fp-act">
         <a class="fp-btn" href="<?= path('/login') ?>">登录体验演示</a>
-        <a class="fp-ghost" href="<?= path('/pricing') ?>">对比四个版本 →</a>
+        <?php if ($banner): ?><a class="fp-ghost" href="<?= path('/pricing') ?>">对比四个版本 →</a><?php endif; ?>
       </div>
     </div>
   </div>
@@ -56,12 +57,16 @@ $plans = [
       <div class="fp-card"><div class="ico"><?= $c[0] ?></div><h3><?= e($c[1]) ?></h3><p><?= e($c[2]) ?></p></div>
     <?php endforeach; ?>
   </div>
+  <?php if ($banner): ?>
   <div class="fp-price">
     <?php foreach ($plans as $pl): ?>
       <div class="fp-plan"><div class="n"><?= e($pl[0]) ?></div><div class="p"><?= e($pl[1]) ?></div><div class="d"><?= e($pl[2]) ?></div><a href="<?= e($pl[3]) ?>">立即购买 →</a></div>
     <?php endforeach; ?>
   </div>
+  <?php endif; ?>
+  <?php if ($banner): ?>
   <div class="fp-demo">
     <p>演示账号 <code>demo@fulkteam.cn</code> / <code>user@fulkteam.cn</code>　密码 <code>FulkDemo2026</code>　·　数据每天凌晨自动重置，随便玩</p>
   </div>
+  <?php endif; ?>
 </div>

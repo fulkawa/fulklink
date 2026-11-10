@@ -11,6 +11,7 @@ $quads = [
 ];
 $trust = ['域名与成员不限量', '专属客服通道', '对公转账与合同', '电子普票当天开'];
 ?>
+<?php $banner = \App\Config::get('app.demo_banner'); ?>
 <style>
 .fk-ent{--bg:#0a0e14;--panel:#111827;--fg:#e6edf3;--dim:#8b98a9;--gold:#f0b429;--teal:#2dd4bf;--line:#1f2937;color:var(--fg)}
 .fk-ent .fe-hero{background:radial-gradient(ellipse at 20% 0%,#12203a 0%,var(--bg) 55%);padding:84px 0 68px;border-bottom:1px solid var(--line)}
@@ -44,7 +45,7 @@ $trust = ['域名与成员不限量', '专属客服通道', '对公转账与合�
       <p class="fe-lead">全部 24 项能力一次放开：审计日志、开放 API、目标域名白名单、云端风控，域名与成员不限量。为企业合规与集成场景而生——出了事能追溯，接系统有接口，扩规模不用谈价。</p>
       <div class="fe-act">
         <a class="fe-btn" href="<?= path('/login') ?>">进入演示后台</a>
-        <a class="fe-btn ghost" href="<?= path('/buy') ?>?plan=enterprise">获取报价 · 对公与合同</a>
+        <?php if ($banner): ?><a class="fe-btn ghost" href="<?= path('/buy') ?>?plan=enterprise">获取报价 · 对公与合同</a><?php endif; ?>
       </div>
     </div>
   </div>
@@ -53,6 +54,7 @@ $trust = ['域名与成员不限量', '专属客服通道', '对公转账与合�
       <div class="fe-quad"><h3><?= e($q[0]) ?></h3><p><?= e($q[1]) ?></p></div>
     <?php endforeach; ?>
   </div>
+  <?php if ($banner): ?>
   <div class="fe-price">
     <div>
       <h2>一个价格，全部放开</h2>
@@ -68,4 +70,5 @@ $trust = ['域名与成员不限量', '专属客服通道', '对公转账与合�
       <p class="tiny">演示账号 demo@fulkteam.cn<br>密码 FulkDemo2026 · 数据每日重置</p>
     </div>
   </div>
+  <?php endif; ?>
 </div>
