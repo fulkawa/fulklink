@@ -15,13 +15,21 @@ final class PublicController
     public function home(array $params = []): Response
     {
         /*
-         * 客户站（APP_MODE=client）打开首页要直接进自己的短链工具。
-         * 让人先看到「买源码」的广告页是错的——这套程序已经是他买的了。
+         * 客户站（APP_MODE=client）打开首页默认直接进自己的短链工具——
+         * 让人先看到「买源码」的广告页是错的，这套程序已经是他买的了。
+         * 两种例外：
+         *   1. 商业版授权（landing.public 能力）：对外落地页，客户拿它发展自己的客户
+         *   2. SHOW_LANDING=1：手动开落地页（私用/开源站想给访客一个门面时用）
          */
         if (\App\Cloud\Mode::isClient()) {
-            return \App\Auth::user() === null
-                ? Response::redirect(path('/login'), 302)
-                : Response::redirect(path('/links'), 302);
+            if (\App\Auth::user() !== null) {
+                return Response::redirect(path('/links'), 302);
+            }
+            $canLanding = \App\Cloud\Entitlement::has('landing.public')
+                || (bool) \App\Config::get('app.landing');
+            if (!$canLanding) {
+                return Response::redirect(path('/login'), 302);
+            }
         }
 
         return Response::html(View::render('home', [

@@ -1,11 +1,29 @@
 <?php
 /**
- * 首页分发：EDITION_FORCE 锁档站点（演示站 / 定制包）按档位渲染专属首页；
- * 官网（无锁档）与客户站（client 模式，控制器里已 302）走原版渲染。
+ * 首页分发：档位专属首页只在三种情况渲染——
+ *   1. 客户站持有 landing.public 能力（商业版授权，按运行时真实档位取变体）
+ *   2. SHOW_LANDING=1 手动开（私用/开源站给访客一个门面）
+ *   3. EDITION_FORCE 锁档站点（演示站 / 定制包）
+ * 官网（云端）与未开开关的私用客户站走原版渲染。
  */
-$forcedGroup = strtolower(trim((string) \App\Config::get('edition.force', '')));
-if ($forcedGroup !== '' && in_array($forcedGroup, ['free', 'personal', 'pro', 'enterprise'], true)) {
-    $variant = __DIR__ . '/home_' . $forcedGroup . '.php';
+$tier = '';
+$showLanding = false;
+if (!\App\Cloud\Mode::isCloud()) {
+    $showLanding = \App\Cloud\Entitlement::has('landing.public')
+        || (bool) \App\Config::get('app.landing');
+    if ($showLanding) {
+        $tier = \App\Plans::group(\App\Cloud\Entitlement::plan());
+    }
+}
+if (!$showLanding) {
+    $forcedGroup = strtolower(trim((string) \App\Config::get('edition.force', '')));
+    if ($forcedGroup !== '' && in_array($forcedGroup, ['free', 'personal', 'pro', 'enterprise'], true)) {
+        $tier = $forcedGroup;
+        $showLanding = true;
+    }
+}
+if ($showLanding && $tier !== '' && in_array($tier, ['free', 'personal', 'pro', 'enterprise'], true)) {
+    $variant = __DIR__ . '/home_' . $tier . '.php';
     if (is_file($variant)) {
         require $variant;
         return;

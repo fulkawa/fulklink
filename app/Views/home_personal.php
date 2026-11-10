@@ -8,13 +8,11 @@ $cards = [
     ['📊', '统计看得懂', '按天 / 来源 / 设备三个维度看数，每次点击单独留痕，投诉来了不抓瞎。'],
     ['🏠', '域名是自己的', '绑定你自己的域名发短链，品牌不挂在别人名下，数据也不出门。'],
 ];
-$plans = [
-    ['月付', '¥29', '按月订阅，随时停', '/buy?plan=personal_monthly'],
-    ['年付', '¥299', '一次管一年，省 7 个月', '/buy?plan=personal_yearly'],
-    ['买断', '¥699', '一次付清永久用', '/buy?plan=personal'],
-];
 ?>
-<?php $banner = \App\Config::get('app.demo_banner'); ?>
+<?php $banner = \App\Config::get('app.demo_banner'); $plans = $banner ? [
+    ['个人私用版', '¥299', '仅内部使用 · 不对外', '/buy?plan=personal_yearly'],
+    ['个人商业版', '¥899', '含对外落地页 · 可发展自己的用户', '/buy?plan=personal_commercial'],
+] : []; ?>
 <style>
 .fk-personal{--ac:#0284c7;--ac2:#38bdf8;--fg:#0f172a;--dim:#475569}
 .fk-personal .fp-hero{background:linear-gradient(160deg,#e0f2fe 0%,#f0f9ff 55%,#fff 100%);padding:72px 0 60px;text-align:center}
@@ -47,7 +45,7 @@ $plans = [
       <h1>你的短链，你的域名，你的数据</h1>
       <p class="fp-lead">给个人和小团队的短链工作台：发出去的每条链接都能管、能看、能收回来。装在自己服务器上，不托管、不经过第三方。</p>
       <div class="fp-act">
-        <a class="fp-btn" href="<?= path('/login') ?>">登录体验演示</a>
+        <a class="fp-btn" href="<?= $banner ? path('/login') : path('/register') ?>"><?= $banner ? '登录体验演示' : '免费注册使用' ?></a>
         <?php if ($banner): ?><a class="fp-ghost" href="<?= path('/pricing') ?>">对比四个版本 →</a><?php endif; ?>
       </div>
     </div>

@@ -56,8 +56,8 @@ $panel = [
         <h1>当链接多到管不过来，就该换专业版了</h1>
         <p class="fpro-lead">3 个域名、5 个成员、批量与分组、CSV 全量导出，再加一层云端风控。为把短链当正经业务跑的团队准备。</p>
         <div class="fpro-btns">
-          <a class="fpro-btn" href="<?= path('/login') ?>">进入演示后台</a>
-          <?php if ($banner): ?><a class="fpro-btn ghost" href="<?= path('/buy') ?>?plan=pro">¥1,980 / 年</a><?php endif; ?>
+          <a class="fpro-btn" href="<?= $banner ? path('/login') : path('/register') ?>"><?= $banner ? '进入演示后台' : '免费注册使用' ?></a>
+          <?php if ($banner): ?><a class="fpro-btn ghost" href="<?= path('/buy') ?>?plan=pro_commercial">¥3,980 / 年 · 商业版</a><?php endif; ?>
         </div>
       </div>
       <div class="fpro-panel">
@@ -79,10 +79,10 @@ $panel = [
       </div>
       <?php if ($banner): ?>
       <div class="fpro-side">
-        <div class="p">¥1,980</div>
-        <div class="u">每年 · 含全部专业版权益</div>
-        <a href="<?= path('/buy') ?>?plan=pro">升级专业版</a>
-        <p class="fpro-demo">演示账号 <b>demo@fulkteam.cn</b><br>密码 <b>FulkDemo2026</b><br>数据每天凌晨自动重置</p>
+        <div class="p">¥3,980</div>
+        <div class="u">商业版每年 · 含对外落地页</div>
+        <a href="<?= path('/buy') ?>?plan=pro_commercial">升级专业商业版</a>
+        <p class="fpro-demo">私用版 ¥1,980/年（不对外）<br>演示账号 <b>demo@fulkteam.cn</b><br>密码 <b>FulkDemo2026</b> · 数据每日重置</p>
       </div>
       <?php endif; ?>
     </div>

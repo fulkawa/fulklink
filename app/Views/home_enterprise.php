@@ -44,8 +44,8 @@ $trust = ['域名与成员不限量', '专属客服通道', '对公转账与合�
       <h1>链接是你的业务入口，<em>控制权必须完整</em></h1>
       <p class="fe-lead">全部 24 项能力一次放开：审计日志、开放 API、目标域名白名单、云端风控，域名与成员不限量。为企业合规与集成场景而生——出了事能追溯，接系统有接口，扩规模不用谈价。</p>
       <div class="fe-act">
-        <a class="fe-btn" href="<?= path('/login') ?>">进入演示后台</a>
-        <?php if ($banner): ?><a class="fe-btn ghost" href="<?= path('/buy') ?>?plan=enterprise">获取报价 · 对公与合同</a><?php endif; ?>
+        <a class="fe-btn" href="<?= $banner ? path('/login') : path('/register') ?>"><?= $banner ? '进入演示后台' : '免费注册使用' ?></a>
+        <?php if ($banner): ?><a class="fe-btn ghost" href="<?= path('/buy') ?>?plan=enterprise_commercial">获取报价 · 对公与合同</a><?php endif; ?>
       </div>
     </div>
   </div>
@@ -57,17 +57,17 @@ $trust = ['域名与成员不限量', '专属客服通道', '对公转账与合�
   <?php if ($banner): ?>
   <div class="fe-price">
     <div>
-      <h2>一个价格，全部放开</h2>
-      <p style="color:var(--dim);line-height:1.85;font-size:14.5px">不按量计费、不设功能墙。企业版按年订阅，部署在你自己的服务器，授权绑域名；到期续费沿用原码，域名不用重绑。</p>
+      <h2>商业版对外运营，私用版内部管理</h2>
+      <p style="color:var(--dim);line-height:1.85;font-size:14.5px">商业版解锁对外落地页：你的访客打开你的域名先看到产品门面，注册进来用——你的客户你做主。部署在你自己的服务器，授权绑域名，到期续费沿用原码。</p>
       <div class="fe-trust">
         <?php foreach ($trust as $t): ?><span><?= e($t) ?></span><?php endforeach; ?>
       </div>
     </div>
     <div class="fe-side">
-      <div class="big">¥6,800</div>
-      <div class="per">每年 · 含全部企业版权益与更新</div>
-      <a class="fe-btn" style="margin-top:20px" href="<?= path('/buy') ?>?plan=enterprise">立即采购</a>
-      <p class="tiny">演示账号 demo@fulkteam.cn<br>密码 FulkDemo2026 · 数据每日重置</p>
+      <div class="big">¥12,800</div>
+      <div class="per">企业商业版每年 · 含对外落地页</div>
+      <a class="fe-btn" style="margin-top:20px" href="<?= path('/buy') ?>?plan=enterprise_commercial">立即采购</a>
+      <p class="tiny">企业私用版 ¥6,800/年（不对外）<br>演示账号 demo@fulkteam.cn · 密码 FulkDemo2026<br>数据每日重置</p>
     </div>
   </div>
   <?php endif; ?>
