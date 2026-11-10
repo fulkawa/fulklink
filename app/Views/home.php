@@ -1,6 +1,18 @@
 <?php
 /** @var array $plans */
 $plans = \App\Plans::publicList();
+/* 演示站入口只在官网显示：开源包客户站装到自己服务器上，不该出现我们的演示链接 */
+$isOfficial = str_contains((string) cfg('app.url'), 'lp.fulkteam.cn');
+$demos = $isOfficial ? [
+    ['name' => '开源免费版', 'url' => 'https://free.fulkteam.cn',
+     'desc' => '本地功能全开放：密码、有效期、分组批量、明细统计与导出；不含云端风控与开放 API。'],
+    ['name' => '个人版', 'url' => 'https://personal.fulkteam.cn',
+     'desc' => '短链密码、有效期、按天 / 来源 / 设备统计、点击明细、1 个自定义域名。'],
+    ['name' => '专业版', 'url' => 'https://pro.fulkteam.cn',
+     'desc' => '个人版全部能力，再加 CSV 导出、5 个成员账号、3 个自定义域名。'],
+    ['name' => '企业版', 'url' => 'https://enterprise.fulkteam.cn',
+     'desc' => '全部 24 项能力：审计日志、目标域名白名单、开放 API、云端风控，额度不限。'],
+] : [];
 ?>
 
 <section class="hero">
@@ -20,6 +32,34 @@ $plans = \App\Plans::publicList();
     </div>
   </div>
 </section>
+
+<?php if ($demos !== []): ?>
+<section class="wrap sect">
+  <h2>四个演示站，直接上手</h2>
+  <p class="sub">每个版本一个独立站点、独立数据库。不用注册，用演示账号就能真建短链、看统计、进后台比较版本差异。</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+    <?php foreach ($demos as $d): ?>
+      <div class="panel panel-pad">
+        <div class="panel-t"><?= e($d['name']) ?></div>
+        <p class="small dim" style="min-height:64px"><?= e($d['desc']) ?></p>
+        <a class="btn ghost block" href="<?= e($d['url']) ?>" target="_blank" rel="noopener noreferrer">打开演示站 ↗</a>
+      </div>
+    <?php endforeach; ?>
+  </div>
+  <div class="panel panel-pad" style="margin-top:14px">
+    <div class="panel-t">演示账号</div>
+    <p class="small">
+      管理员（看后台与版本差异）<code>demo@fulkteam.cn</code>　·
+      普通用户（建短链、看统计）<code>user@fulkteam.cn</code>　·
+      密码统一 <code>FulkDemo2026</code>
+    </p>
+    <p class="tiny dim" style="margin-bottom:0">
+      四个站与官网生产数据完全隔离，每天 04:00 自动清空演示数据，请勿填写任何真实信息。
+      开源免费版按开源版自身的能力表开放本地功能，不走商业版的四档阶梯。
+    </p>
+  </div>
+</section>
+<?php endif; ?>
 
 <section class="wrap sect">
   <h2>能做什么</h2>
