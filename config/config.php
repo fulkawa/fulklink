@@ -37,9 +37,9 @@ return [
         'name'      => $env('SITE_NAME', 'FulkLink 福链'),
         'url'       => rtrim((string) $env('SITE_URL', 'http://localhost'), '/'),
         'tagline'   => $env('SITE_TAGLINE', '短链、二维码、跳转记录'),
-        /* SHOW_LANDING=1：客户站未登录时先展示落地页（按授权档位渲染），默认关闭直接进登录 */
-        'landing'   => $env('SHOW_LANDING', '') === '1',
-        /* DEMO_BANNER=1：落地页显示价格/购买/演示账号（仅演示站）。客户站即使开落地页也绝不出现销售内容 */
+        /* DEMO_BANNER=1：落地页显示价格/购买/演示账号（官方演示站专用）。
+           仅对持有 landing.public 能力（商业授权）或 EDITION_FORCE 锁档的站生效，
+           私用版 / 开源站即使误开也不会出现销售内容 */
         'demo_banner' => $env('DEMO_BANNER', '') === '1',
         'env'       => $env('APP_ENV', 'production'),
         'debug'     => $bool('APP_DEBUG', false),
@@ -129,5 +129,8 @@ return [
         'heartbeat'   => (int) $env('CLOUD_HEARTBEAT', '21600'),
         /* 云端接口的日调用上限，防止被当成免费 API 刷 */
         'daily_limit' => (int) $env('CLOUD_DAILY_LIMIT', '20000'),
+        /* 发行方登记令牌：商城发码后向本云端登记授权（端点见云端路由表）。
+           空 = 端点关闭（fail-closed）；两端必须一致（lp .env 与商城 .env） */
+        'register_token' => $env('LICENSE_REGISTER_TOKEN', ''),
     ],
 ];

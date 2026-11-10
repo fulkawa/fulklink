@@ -1,25 +1,24 @@
 <?php
 /**
- * 首页分发：档位专属首页只在三种情况渲染——
+ * 首页分发：档位专属首页只在两种情况渲染——
  *   1. 客户站持有 landing.public 能力（商业版授权，按运行时真实档位取变体）
- *   2. SHOW_LANDING=1 手动开（私用/开源站给访客一个门面）
- *   3. EDITION_FORCE 锁档站点（演示站 / 定制包）
- * 官网（云端）与未开开关的私用客户站走原版渲染。
+ *   2. EDITION_FORCE 锁档站点（官方演示站 / 定制包）
+ * 私用版客户站与未开锁档的站走原版渲染（client 模式下控制器已 302 进工作台）。
+ * 价格横幅（$banner）只在锁档形态出现——客户站永远看不到我们的定价。
  */
 $tier = '';
 $showLanding = false;
-if (!\App\Cloud\Mode::isCloud()) {
-    $showLanding = \App\Cloud\Entitlement::has('landing.public')
-        || (bool) \App\Config::get('app.landing');
-    if ($showLanding) {
-        $tier = \App\Plans::group(\App\Cloud\Entitlement::plan());
-    }
+$banner = false;
+if (!\App\Cloud\Mode::isCloud() && \App\Cloud\Entitlement::has('landing.public')) {
+    $tier = \App\Plans::group(\App\Cloud\Entitlement::plan());
+    $showLanding = in_array($tier, ['free', 'personal', 'pro', 'enterprise'], true);
 }
 if (!$showLanding) {
     $forcedGroup = strtolower(trim((string) \App\Config::get('edition.force', '')));
     if ($forcedGroup !== '' && in_array($forcedGroup, ['free', 'personal', 'pro', 'enterprise'], true)) {
         $tier = $forcedGroup;
         $showLanding = true;
+        $banner = (bool) \App\Config::get('app.demo_banner');
     }
 }
 if ($showLanding && $tier !== '' && in_array($tier, ['free', 'personal', 'pro', 'enterprise'], true)) {

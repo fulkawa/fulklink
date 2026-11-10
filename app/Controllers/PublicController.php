@@ -17,17 +17,14 @@ final class PublicController
         /*
          * 客户站（APP_MODE=client）打开首页默认直接进自己的短链工具——
          * 让人先看到「买源码」的广告页是错的，这套程序已经是他买的了。
-         * 两种例外：
-         *   1. 商业版授权（landing.public 能力）：对外落地页，客户拿它发展自己的客户
-         *   2. SHOW_LANDING=1：手动开落地页（私用/开源站想给访客一个门面时用）
+         * 例外：持有 landing.public 能力（商业版授权）= 对外落地页，
+         * 客户拿它发展自己的客户；私用版与开源版没有该能力，行为不变。
          */
         if (\App\Cloud\Mode::isClient()) {
             if (\App\Auth::user() !== null) {
                 return Response::redirect(path('/links'), 302);
             }
-            $canLanding = \App\Cloud\Entitlement::has('landing.public')
-                || (bool) \App\Config::get('app.landing');
-            if (!$canLanding) {
+            if (!\App\Cloud\Entitlement::has('landing.public')) {
                 return Response::redirect(path('/login'), 302);
             }
         }

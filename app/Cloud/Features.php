@@ -1,21 +1,41 @@
 <?php
 /**
- * 能力码。授权决定「有哪些能力」，能力码决定「界面和行为」。
+ * 【开源版专用】能力码桩。
  *
- * 能力码用点号分层，客户端只认字符串，不认版本名。这样以后调整版本
- * 组合（比如把某个功能从专业版下放到个人版）只改服务端，客户站不用升级。
+ * 开源版没有版本阶梯：所有本地能力全部放开（密码、有效期、分组、批量、
+ * 明细统计、导出），不搞「演示版」。留在商业版的只有运维与云端能力：
+ * 自定义域名、团队协作、开放 API、IP 归属地、云端风控。
  *
- * 带 cloud. 前缀的是「离开云端就用不了」的能力，故意和本地能力区分开：
- * 客户想自己实现也没用，数据在云端。
+ * 这个文件只在构建开源包时替换进产物，主仓库（商业版）不受影响。
  */
 declare(strict_types=1);
 
 namespace App\Cloud;
 
-use App\Editions;
+use App\Plans;
 
 final class Features
 {
+    /** 开源版固定能力：本地功能全给 */
+    private const BASE = [
+        'links.create',
+        'links.qr',
+        'stats.basic',
+        'links.password',
+        'links.expire',
+        'links.group',
+        'links.bulk',
+        'stats.daily',
+        'stats.source',
+        'stats.device',
+        'click.log',
+        'stats.export',
+        // 开源后台本来就提供「目标域名白名单」设置并保存 link.allowed_hosts，
+        // 但此前能力表没放这个码，Shorten::validateUrl 的 Gate 判断永远跳过，
+        // 配置形同虚设。安全能力不应被套餐开关隐式关闭。
+        'target.whitelist',
+    ];
+
     /** 人话名字，后台和报错提示用 */
     public const LABEL = [
         'links.create'       => '创建短链',
@@ -33,7 +53,6 @@ final class Features
         'domains.unlimited'  => '域名不限',
         'members.multi'      => '多成员',
         'audit.log'          => '审计日志',
-        'landing.public'     => '对外落地页',
         'target.whitelist'   => '目标域名白名单',
         'api.open'           => '开放 API',
         'cloud.geo'          => 'IP 归属地（云端）',
@@ -44,19 +63,19 @@ final class Features
         'cloud.relay'        => '多节点同步（云端）',
     ];
 
-    /**
-     * 能力清单取自 App\Editions（唯一真源），本类只保留能力码的人话名字
-     * 与历史调用入口。不要再在这里另写一份 BASE/GROUP —— 两份清单会漂移。
-     */
     public static function forPlan(string $plan): array
     {
-        return Editions::capabilities($plan);
+        return array_values(self::BASE);
     }
 
     /** 能力包之外，还要告诉客户端能用多少额度 */
     public static function quota(string $plan): array
     {
-        return Editions::quota($plan);
+        return [
+            'links'   => Plans::quota($plan, 'links'),
+            'domains' => Plans::quota($plan, 'domains'),
+            'members' => Plans::quota($plan, 'members'),
+        ];
     }
 
     public static function label(string $code): string
