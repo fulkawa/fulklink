@@ -1,4 +1,17 @@
 <?php
+/**
+ * 首页分发：EDITION_FORCE 锁档站点（演示站 / 定制包）按档位渲染专属首页；
+ * 官网（无锁档）与客户站（client 模式，控制器里已 302）走原版渲染。
+ */
+$forcedGroup = strtolower(trim((string) \App\Config::get('edition.force', '')));
+if ($forcedGroup !== '' && in_array($forcedGroup, ['free', 'personal', 'pro', 'enterprise'], true)) {
+    $variant = __DIR__ . '/home_' . $forcedGroup . '.php';
+    if (is_file($variant)) {
+        require $variant;
+        return;
+    }
+}
+
 /** @var array $plans */
 $plans = \App\Plans::publicList();
 /* 演示站入口只在官网显示：开源包客户站装到自己服务器上，不该出现我们的演示链接 */
