@@ -2,12 +2,12 @@
     "product": "fulklink",
     "edition": "open",
     "title": "开源版",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "php_min": "8.0",
-    "built_at": "2026-11-09T23:20:00+08:00",
+    "built_at": "2026-11-10T01:20:00+08:00",
     "total_files": 80,
-    "total_bytes": 574458,
-    "root_sha256": "7954a1fb9d7a6a9ad884af3950215640f964ea3372892ada5f424e8aff3eb249",
+    "total_bytes": 574301,
+    "root_sha256": "ae2921c3d4daab171b462b66eb1cc1f9c093a41e82b83c6283f0b22776243d0d",
     "files": [
         {
             "path": ".env.example",
@@ -17,7 +17,7 @@
         {
             "path": "VERSION",
             "bytes": 6,
-            "sha256": "51c18dc8694861beb47a67894e61044864214435389f6d3a274704d9566ff96c"
+            "sha256": "6d6b9230dd8b8aac527f8929b7c2fc1fa0365deccca856216de979d6f5c6a6fe"
         },
         {
             "path": "app/Auth.php",
@@ -171,8 +171,8 @@
         },
         {
             "path": "app/Settings.php",
-            "bytes": 6240,
-            "sha256": "38f5287084307d5dc94ed3791aec75f61862dd005acfecbe793d18adfd55cb69"
+            "bytes": 6167,
+            "sha256": "cb81ed8bdae366b0a2ce8ad53f99c895ea21f057db49f75b5e5fc1a523006dc5"
         },
         {
             "path": "app/Shorten.php",
@@ -281,8 +281,8 @@
         },
         {
             "path": "app/Views/home.php",
-            "bytes": 8815,
-            "sha256": "315a9292408638c669de4a3abbcf90f1f94fcff0521da72daf7d1b64ffffae15"
+            "bytes": 9178,
+            "sha256": "a1d5a9df00373ff3135983cb77f3490e4a0b86a5113509e8d0640e2eeb0914b8"
         },
         {
             "path": "app/Views/home_enterprise.php",
@@ -311,8 +311,8 @@
         },
         {
             "path": "app/Views/legal.php",
-            "bytes": 5979,
-            "sha256": "fdc47672a0c2c90effa68f254760cc029c777f9f3a36681d27b247c91dbf57ff"
+            "bytes": 5532,
+            "sha256": "55bb39e1ed4fb3ce8018c2e7619352cdb8c7a57e336fc36f15d4609c7e645e60"
         },
         {
             "path": "app/Views/links/audit.php",

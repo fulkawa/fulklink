@@ -17,8 +17,6 @@ final class Settings
         'pay.wechat.private_key',
         'pay.alipay.private_key',
         'pay.alipay.public_key',
-        'verify.alipay.private_key',
-        'verify.alipay.public_key',
         'mail.pass',
         'sms.aliyun.secret',
         'sms.tencent.secret',

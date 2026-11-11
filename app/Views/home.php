@@ -9,16 +9,21 @@
 $tier = '';
 $showLanding = false;
 $banner = false;
-if (!\App\Cloud\Mode::isCloud() && \App\Cloud\Entitlement::has('landing.public')) {
-    $tier = \App\Plans::group(\App\Cloud\Entitlement::plan());
-    $showLanding = in_array($tier, ['free', 'personal', 'pro', 'enterprise'], true);
-}
-if (!$showLanding) {
-    $forcedGroup = strtolower(trim((string) \App\Config::get('edition.force', '')));
-    if ($forcedGroup !== '' && in_array($forcedGroup, ['free', 'personal', 'pro', 'enterprise'], true)) {
-        $tier = $forcedGroup;
-        $showLanding = true;
-        $banner = (bool) \App\Config::get('app.demo_banner');
+if (!\App\Cloud\Mode::isCloud()) {
+    /* 商业授权（landing.public 能力）优先：真实档位驱动，横幅需 DEMO_BANNER=1 */
+    if (\App\Cloud\Entitlement::has('landing.public')) {
+        $tier = \App\Plans::group(\App\Cloud\Entitlement::plan());
+        $showLanding = in_array($tier, ['free', 'personal', 'pro', 'enterprise'], true);
+        $banner = $showLanding && (bool) \App\Config::get('app.demo_banner');
+    }
+    /* 锁档兜底（官方演示站 / 定制包）：注意 forcedEdition 会短路云端授权，勿与真实授权混用 */
+    if (!$showLanding) {
+        $forcedGroup = strtolower(trim((string) \App\Config::get('edition.force', '')));
+        if ($forcedGroup !== '' && in_array($forcedGroup, ['free', 'personal', 'pro', 'enterprise'], true)) {
+            $tier = $forcedGroup;
+            $showLanding = true;
+            $banner = (bool) \App\Config::get('app.demo_banner');
+        }
     }
 }
 if ($showLanding && $tier !== '' && in_array($tier, ['free', 'personal', 'pro', 'enterprise'], true)) {
