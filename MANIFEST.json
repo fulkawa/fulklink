@@ -2,12 +2,12 @@
     "product": "fulklink",
     "edition": "open",
     "title": "开源版",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "php_min": "8.0",
-    "built_at": "2026-11-10T01:20:00+08:00",
+    "built_at": "2026-11-14T00:00:00+08:00",
     "total_files": 80,
-    "total_bytes": 574301,
-    "root_sha256": "ae2921c3d4daab171b462b66eb1cc1f9c093a41e82b83c6283f0b22776243d0d",
+    "total_bytes": 576467,
+    "root_sha256": "2fcee8f88671e85beff9b8dd372e2179d7d6e36b7c229b850b2959c8ec898f5d",
     "files": [
         {
             "path": ".env.example",
@@ -17,7 +17,7 @@
         {
             "path": "VERSION",
             "bytes": 6,
-            "sha256": "6d6b9230dd8b8aac527f8929b7c2fc1fa0365deccca856216de979d6f5c6a6fe"
+            "sha256": "326dd5d8641f399990de42def50ac29eb4c9222601c0a0a3fc3c947dd3bec65d"
         },
         {
             "path": "app/Auth.php",
@@ -141,8 +141,8 @@
         },
         {
             "path": "app/Mailer.php",
-            "bytes": 11794,
-            "sha256": "1ca80f6d0c1932540bbb38d65089c8c8bfac301aa7089c04ed6a5a2388a5da85"
+            "bytes": 12869,
+            "sha256": "945493fc69f42e2867cf51b4c3529ac487d20657e92b025cb6256f35190a4ad2"
         },
         {
             "path": "app/Migrator.php",
@@ -246,8 +246,8 @@
         },
         {
             "path": "app/Views/auth/login.php",
-            "bytes": 1591,
-            "sha256": "f2b8422267b2e49d0190bed5a7599af79877fdd7e157b7608b4781302ebce583"
+            "bytes": 2416,
+            "sha256": "c293f57d54904594eecf610dceec0ffaab8a4d5f0d9b8777040163c364253d94"
         },
         {
             "path": "app/Views/auth/register.php",
@@ -281,8 +281,8 @@
         },
         {
             "path": "app/Views/home.php",
-            "bytes": 9178,
-            "sha256": "a1d5a9df00373ff3135983cb77f3490e4a0b86a5113509e8d0640e2eeb0914b8"
+            "bytes": 9196,
+            "sha256": "8c72d4989b3e8ab74171fd94da4dc128a7b650a3a5a3f2f4ed052b1473d857a2"
         },
         {
             "path": "app/Views/home_enterprise.php",
@@ -361,8 +361,8 @@
         },
         {
             "path": "config/config.php",
-            "bytes": 5722,
-            "sha256": "0599136b0c96070569e4cf59bdb7d740bc5dd173b55e28e1e50a633548ba9e00"
+            "bytes": 5970,
+            "sha256": "2f4a1ff4e5bc8661ec29e3bdac4f973508611aaf6f6fa5c8595b87d004fa9e35"
         },
         {
             "path": "data/.gitkeep",

@@ -41,6 +41,9 @@ return [
            仅对持有 landing.public 能力（商业授权）或 EDITION_FORCE 锁档的站生效，
            私用版 / 开源站即使误开也不会出现销售内容 */
         'demo_banner' => $env('DEMO_BANNER', '') === '1',
+        /* DEMO_ACCOUNT=1：登录页显示演示账号并支持一键填入（仅官方演示站）。
+           客户站绝不开——开了等于把后台账号写在登录页上 */
+        'demo_account' => $env('DEMO_ACCOUNT', '') === '1',
         'env'       => $env('APP_ENV', 'production'),
         'debug'     => $bool('APP_DEBUG', false),
         'timezone'  => $env('APP_TIMEZONE', 'Asia/Shanghai'),

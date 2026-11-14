@@ -246,8 +246,10 @@ final class Mailer
      * 统一邮件外壳。客户站点发验证码、官网发授权码都用它，样式一致。
      *
      * @param array<int,string> $lines 正文段落（纯文本，内部会转义）
+     * @param array{label?:string,url?:string} $action 可选行动按钮；不传则不渲染，
+     *        老调用点（验证码 / 测试信）行为完全不变。url 只接受 http(s) 绝对地址。
      */
-    public static function shell(string $siteName, string $title, array $lines, string $code = '', string $footNote = ''): string
+    public static function shell(string $siteName, string $title, array $lines, string $code = '', string $footNote = '', array $action = []): string
     {
         $site = e($siteName);
         $body = '';
@@ -260,6 +262,18 @@ final class Mailer
                 . 'font:600 26px/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:6px;color:#1b2330;text-align:center">'
                 . e($code) . '</div>';
         }
+        $actionHtml = '';
+        $actionLabel = (string) ($action['label'] ?? '');
+        $actionUrl = (string) ($action['url'] ?? '');
+        // 只收 http/https 绝对地址：邮件里绝不接受 javascript: 之类的伪协议，
+        // 也不接受站内相对路径（收件人在邮箱里点 /download/xxx 只会得到 404）。
+        if ($actionLabel !== '' && preg_match('#^https?://#i', $actionUrl)) {
+            $actionHtml = '<p style="margin:20px 0 0;text-align:center">'
+                . '<a href="' . e($actionUrl) . '" style="display:inline-block;padding:11px 22px;'
+                . 'background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;'
+                . 'font:600 14px/1.4 system-ui,-apple-system,\'Segoe UI\',sans-serif">'
+                . e($actionLabel) . '</a></p>';
+        }
         $foot = $footNote !== ''
             ? '<p style="margin:22px 0 0;font-size:12px;line-height:1.7;color:#8b95a5">' . e($footNote) . '</p>'
             : '';
@@ -271,7 +285,7 @@ final class Mailer
             . '<tr><td style="padding:28px 30px 8px;font:600 15px/1.4 system-ui,-apple-system,\'Segoe UI\',sans-serif;color:#1b2330">'
             . $site . '</td></tr>'
             . '<tr><td style="padding:8px 30px 0"><div style="font:600 19px/1.4 system-ui,sans-serif;color:#1b2330;margin-bottom:16px">'
-            . e($title) . '</div>' . $body . $codeBox . $foot . '</td></tr>'
+            . e($title) . '</div>' . $body . $codeBox . $actionHtml . $foot . '</td></tr>'
             . '<tr><td style="padding:22px 30px 28px;border-top:1px solid #eef1f6;font:12px/1.6 system-ui,sans-serif;color:#8b95a5">'
             . '这封信由系统自动发出，不用回复。'
             . '</td></tr></table></body></html>';

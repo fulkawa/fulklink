@@ -41,11 +41,11 @@ $isOfficial = str_contains((string) cfg('app.url'), 'lp.fulkteam.cn');
 $demos = $isOfficial ? [
     ['name' => '开源免费版', 'url' => 'https://free.fulkteam.cn',
      'desc' => '本地功能全开放：密码、有效期、分组批量、明细统计与导出；不含云端风控与开放 API。'],
-    ['name' => '个人版', 'url' => 'https://personal.fulkteam.cn',
+    ['name' => '个人版', 'url' => 'https://inner-personal.fulkteam.cn',
      'desc' => '短链密码、有效期、按天 / 来源 / 设备统计、点击明细、1 个自定义域名。'],
-    ['name' => '专业版', 'url' => 'https://pro.fulkteam.cn',
+    ['name' => '专业版', 'url' => 'https://inner-pro.fulkteam.cn',
      'desc' => '个人版全部能力，再加 CSV 导出、5 个成员账号、3 个自定义域名。'],
-    ['name' => '企业版', 'url' => 'https://enterprise.fulkteam.cn',
+    ['name' => '企业版', 'url' => 'https://inner-enterprise.fulkteam.cn',
      'desc' => '全部 24 项能力：审计日志、目标域名白名单、开放 API、云端风控，额度不限。'],
 ] : [];
 ?>
